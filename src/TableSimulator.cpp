@@ -11,7 +11,8 @@
 
 TableSimulator::TableSimulator(ShapeIOManager * shapeManager) {
     mIOManager = shapeManager;
-    mHeightMapShader.load("shaders/heightMapShader");
+    //mHeightMapShader.load("shaders/heightMapShader");
+    diffuseShader.load("shaders/basic.vert", "shaders/solid.frag");
 }
 
 //--------------------------------------------------------------
@@ -89,9 +90,13 @@ void TableSimulator::drawTableCamView(int px, int py, int w, int h, float zoom) 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mat_ambient);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_DEPTH_TEST);
+   
+    //glDisable(GL_COLOR_MATERIAL);
+    
+    // correct result
+//    glEnable(GL_LIGHTING);
+//    glEnable(GL_NORMALIZE);
+//    glEnable(GL_LIGHT0);
     
     // set scale here. We dont need this inside the draw simulation method
     // anymore. This gives us more consistancy in scaling based on other factors
@@ -108,7 +113,9 @@ void TableSimulator::drawTableCamView(int px, int py, int w, int h, float zoom) 
     
     // turn off GL lighting, saving performance
     // and avoid GL rendering effecting other parts of the app
-    glDisable(GL_LIGHTING);
+//    glDisable(GL_LIGHT0);
+//    glDisable(GL_NORMALIZE);
+//    glDisable(GL_LIGHTING);
     
     cam.end();
 }
@@ -125,13 +132,36 @@ void TableSimulator::drawPinDisplaySimulation() {
     // define 3d table and pin boxes.
     ofBoxPrimitive pin = ofBoxPrimitive(0.95, 0.95, 5);
     ofBoxPrimitive table = ofBoxPrimitive(RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y, 20);
-    
+
     // enable more GL stuff
     // @todo this is added in the setup, right?
     glEnable(GL_DEPTH_TEST);
     
-    // save current matric
+    // save current matrix
     ofPushMatrix();
+    
+    
+    
+    diffuseShader.begin();
+    
+    ofMatrixStack matrixStack(*ofGetWindowPtr());
+    ofMatrix4x4 modelViewMatrix = matrixStack.getModelViewMatrix();
+    
+    ofMatrix3x3 normalMatrix = mat4ToMat3(modelViewMatrix);
+    normalMatrix.invert();
+    normalMatrix.transpose();
+    
+    ofMatrix4x4 projectionMatrix = matrixStack.getProjectionMatrix();
+    
+    diffuseShader.setUniform4f("uColor", 1.0, 0, 0, 1.0);
+    diffuseShader.setUniformMatrix4f("ModelViewMatrix", modelViewMatrix);
+    diffuseShader.setUniformMatrix3f("NormalMatrix", normalMatrix);
+    diffuseShader.setUniformMatrix4f("ProjectionMatrix", projectionMatrix);
+    
+    diffuseShader.setUniform4f("LightPosition", 0.0, -30.0, 30.0, 1.0); // in eye coordinates
+    diffuseShader.setUniform3f("Kd", 1.0, 1.0, 1.0); //Diffuse Reflectivity
+    diffuseShader.setUniform3f("Ld", .9, .9, .9); //LightSource Intensity
+    
     
     // draw the table
     table.draw();
@@ -176,6 +206,10 @@ void TableSimulator::drawPinDisplaySimulation() {
     }
     ofPopMatrix();
     glDisable(GL_DEPTH_TEST);
+    
+    diffuseShader.end();
+    
+    ofPopStyle();
 }
 
 
@@ -208,5 +242,11 @@ void TableSimulator::update() {
     memcpy(pinsFrom, mIOManager->pinHeightFromRelief, sizeof(unsigned char) * RELIEF_SIZE_X * RELIEF_SIZE_Y);
 }
 
+//--------------------------------------------------------------
+
+ofMatrix3x3 TableSimulator::mat4ToMat3(ofMatrix4x4 mat4)
+{
+    return ofMatrix3x3(mat4._mat[0][0], mat4._mat[0][1], mat4._mat[0][2], mat4._mat[1][0], mat4._mat[1][1], mat4._mat[1][2], mat4._mat[2][0], mat4._mat[2][1], mat4._mat[2][2]);
+}
 
 

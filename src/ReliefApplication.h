@@ -1,4 +1,5 @@
 #pragma once
+#define KINECT
 
 #include "ofMain.h"
 #include "baseVideoPlayer.h"
@@ -44,6 +45,8 @@ public:
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
     
+    
+    
     bool useLiveKinect;
     bool useRecording;
     bool useTable = false;
@@ -57,8 +60,8 @@ public:
     int                         maxSpeed;
     
     ImageWarper                 * mImageWarper; // warps images from one coordinate system to another
-    
-    vector                      <ShapeObject*> mCurrentShapeObjects;
+    ShapeObject                 * mCurrentShapeObject;
+    //vector                      <ShapeObject*> mCurrentShapeObjects;
     vector                      <ShapeObject*> allShapeObjects;
     vector                      <string> allsShapeObjectsNames;
     
@@ -66,20 +69,12 @@ public:
     bool                        controlTimeline = false;
     bool                        isVideoLoaded = false;
     
-    bool                        bEscherStart = false;
-    bool                        bEscherRun = false;
-    bool                        bEscherStop = false;
-    vector <string>             allEscherModeNames;
     
     // this is the kinect image thresholded and rendered
     KinectShapeObject           * mKinectShapeObject;
     MachineAnimationShapeObject * mMachineAnimationShapeObject;
-    FlockShapeObject            * mFlockShapeObject;
-    WavyShapeObject             * mWavyShapeObject;
     CalmShapeObject             * mCalmShapeObject; // calm shape object, does nothing but used to reset
-    FadeLoopShapeObject         * mFadeLoopShapeObject;
-    ImageShapeObject            * mImageShapeObject;
-    EscherShapeObject           * mEscherShapeObject;
+    ImageShapeObject            * mImageShapeObject;;
     HandShapeObject             * mHandShapeObject;
     
     ofxCvColorImage             cvColorImage;
@@ -104,16 +99,7 @@ public:
     // setup available screens
     // this is more robust then setting by integer
     // to reorder the screens change order in array.
-    string                      screens[3] = {"timeline", "kinect", "shapeobject"};
-    int                         maxScreens = 3;
-    int                         screenIndex = 0; // starting screen
-    string                      currentScreen = screens[0];
-    
     TableSimulator              * tableSimulation;
-    
-    ofxTimeline                 timeline;
-    void bangFired(ofxTLBangEventArgs& args);
-    void pageChanged(ofxTLPageEventArgs& args);
     
     ofxUITabBar                 * guiTabBar;
     ofxUICanvas                 * coolGui_1;
@@ -131,6 +117,14 @@ public:
     
     void pauseApp();
     void resumeApp();
+    
+    // setup available screens
+    // this is more robust then setting by integer
+    // to reorder the screens change order in array.
+    string                      screens[3] = {"shapeobject", "kinect"};
+    int                         maxScreens = 3;
+    int                         screenIndex = 0; // starting screen
+    string                      currentScreen = screens[0];    bool                        bAnimationLooping = false;
 
 private:
     Apex::ofxMovieExporter      movieExporter;
@@ -141,22 +135,11 @@ private:
     void setupKinectGui();
     void setupCoolGui();
     void setupEasyGui();
+    void drawBitmapString(string _message, int _x, int _y);
     
     void initalizeShapeObjects();
     void registerShapeObjectNamesForGui();
     bool isPaused = false;
-    bool didPauseTimeline = false;
-    string currentPage;
-    bool bAnimationLooping = true;
-    void setPageBasedOnBlobCount();
-    bool isSwitchOnForCurrentPage(string switchName);
-    float getValueForCurrentPage(string curveName);
-    int getIntValueForCurrentPage(string curveName);
+
     void blendCurrentShapeObjectsByHighestValue();
-    void setCurrentShapeObjectsFromActiveTimelineSwitches();
-    void setPageAndPlayFromFirstFrame(string page_name);
-    void repeatCurrentPage();
-    bool isSkipFish = false;
-    bool isSkipMachine = false;
-    bool isEasyModeFishNotShyToggled = false;
 };

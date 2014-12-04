@@ -32,14 +32,17 @@ public:
     void drawPinDisplaySimulation();
     
     ofEasyCam cam; // add mouse controls for camera movement
+    ofLight light;
     
     unsigned char pinsTo [RELIEF_SIZE_X][RELIEF_SIZE_Y];
     unsigned char pinsFrom [RELIEF_SIZE_X][RELIEF_SIZE_Y];
     
     ofShader mHeightMapShader; // this shader renders the depth buffer
+    ofShader diffuseShader;
+
  
 private:
-    
+    ofMatrix3x3 mat4ToMat3(ofMatrix4x4 mat4);
     ShapeIOManager * mIOManager; // manages communication with the pin display
     
 };
