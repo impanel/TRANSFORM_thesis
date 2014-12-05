@@ -13,10 +13,15 @@
 
 // @todo: not a shape object right now
 
-#include "ofMain.h"
+//#include "ofMain.h"
 #include "ofxNetwork.h"
+#include <iostream>
+#include "ShapeObject.h"
+#include "Constants.h"
+#include "ofxOpenCv.h"
 
-class TCPClient {
+
+class TCPClient : public ShapeObject{
     
 public:
     
@@ -34,15 +39,26 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    
     void playBack(vector <string> & _strFrames, int & _frameIndex, int _sequenceFPS, bool _pause, bool _play);
     
     void drawPinsDebug(unsigned char * _theColors);
     void drawPins(unsigned char * _theColors);
+    void renderShape();
+    void renderGraphics(int x, int y, int w, int h);
+    
+    //void setTableValuesForShape(ShapeIOManager *pIOManager);
+    //unsigned char* getPixels();
     
     ofxTCPServer TCP;
     
+    string get_shape_name() {return shape_name; };
+    string shape_name = "tcp";
+
+private:
     vector <string> storeText;
     vector <ofRectangle> rects;
+
     int size;
     int width;
     int height;
@@ -55,7 +71,11 @@ public:
     float pauseTime;
     
     unsigned char * pixels;
+    unsigned char * sortedPixels;
     string receivedText;
+    
+    ofFbo outImage;
+
 };
 
 

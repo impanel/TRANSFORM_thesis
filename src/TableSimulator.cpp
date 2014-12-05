@@ -246,7 +246,15 @@ void TableSimulator::update() {
 
 ofMatrix3x3 TableSimulator::mat4ToMat3(ofMatrix4x4 mat4)
 {
-    return ofMatrix3x3(mat4._mat[0][0], mat4._mat[0][1], mat4._mat[0][2], mat4._mat[1][0], mat4._mat[1][1], mat4._mat[1][2], mat4._mat[2][0], mat4._mat[2][1], mat4._mat[2][2]);
+    return ofMatrix3x3(mat4._mat[0][0],
+                       mat4._mat[0][1],
+                       mat4._mat[0][2],
+                       mat4._mat[1][0],
+                       mat4._mat[1][1],
+                       mat4._mat[1][2],
+                       mat4._mat[2][0],
+                       mat4._mat[2][1],
+                       mat4._mat[2][2]);
 }
 
 

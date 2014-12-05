@@ -10,16 +10,9 @@
 
 //--------------------------------------------------------------
 void TCPClient::setup(){
-    
-    //ofSetFrameRate(3);
-	//ofSetVerticalSync(true);
-    
-    //TRANSFORM dimensions
-    width = 3 * 16;
-    height = 24;
-    
-	size = width * height;
-	pixels = new unsigned char[size];
+   
+	size = RELIEF_SIZE_X * RELIEF_SIZE_Y;
+    pixels = new unsigned char[size];
 	
     //setup the server to listen on 11999
 	TCP.setup(11996);
@@ -29,84 +22,39 @@ void TCPClient::setup(){
 	for(int i = 0; i < size; i++)
 	{
 		rects.push_back(ofRectangle());
-		rects.at(i).setHeight(10);
-		rects.at(i).setWidth(10);
+		rects.at(i).setHeight(1);
+		rects.at(i).setWidth(1);
 	}
-	cout << rects.size() << endl;
     
     bStop = true;
     bPause = false;
     sequenceFPS = 30;
+    
+    outImage.allocate(RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y, GL_RGB);
 }
 
 //--------------------------------------------------------------
 void TCPClient::update(){
-	ofBackground(0, 0, 0);
-}
-
-//--------------------------------------------------------------
-void TCPClient::drawDebug(){
-    ofBackground(0);
-    //ofLog(OF_LOG_VERBOSE, "draw bebug");
-	//ofSetHexColor(0xDDDDDD);
-    ofSetColor(100,100,100);
-    string message = "TCP SERVER EasyPin 005 TRANSFORM \n\nconnect on port: "+ofToString(TCP.getPort());
-	ofDrawBitmapString(message, 80, 80);
     
-    //for each connected client lets get the data being sent and lets print it to the screen
-	for(unsigned int i = 0; i < (unsigned int)TCP.getLastID(); i++) {
-        
-		if(!TCP.isClientConnected(i) )continue;
-        
-		ofSetColor(255, 255, 255);
-        
-		//calculate where to draw the text
-		int xPos = 15;
-		int yPos = 140 + (10 * i);
-        
-		//get the ip and port of the client
-		string port = ofToString( TCP.getClientPort(i) );
-		string ip   = TCP.getClientIP(i);
-		string info = "client "+ofToString(i)+" -connected from "+ip+" on port: "+port;
-        string storeInfo = "stored frames: " + ofToString(storeText.size()) + " fIdx: " + ofToString(frameIndex);
-        
-		//we only want to update the text we have recieved there is data
-		string str = TCP.receive(i);
-        
-		if(str.length() > 0)
-        {
-			storeText.push_back(str);
-            unsigned char * receivedChars = new unsigned char[size];
-            
-            for(int i = 0; i < size; i++)
-                receivedChars[i] = 255  - str[i]; //invert values here because it doesn't work in maxscript
-            pixels = receivedChars;
-		}
-        
-		//draw the info text and the received text bellow it
-		ofDrawBitmapString(info, xPos, yPos);
-        ofDrawBitmapString(storeInfo, xPos + 500, yPos);
-	}
-    //ofDrawBitmapString( ofToString(ofGetFrameRate()), ofGetWidth() - 50, 20);
-	
-    
-    
-    //if (bStop)
-    //    drawPins(pixels);
-	//else
-    //    playBack(storeText, frameIndex, sequenceFPS, bPause, bStop);
-}
-
-//--------------------------------------------------------------
-void TCPClient::draw(){
-    
-	ofSetHexColor(0xDDDDDD);
+    //get data from host (3dsmax)
+    ofSetColor(255, 255, 255);
+    string message = "TCP SERVER EasyPin 006 TRANSFORM \n\nconnect on port: "+ofToString(TCP.getPort());
+    ofDrawBitmapString(message, 80, 80);
     
     //for each connected client lets get the data being sent and lets print it to the screen
 	for(unsigned int i = 0; i < (unsigned int)TCP.getLastID(); i++)
     {
-        
 		if(!TCP.isClientConnected(i) )continue;
+        
+        //calculate where to draw the text
+        int xPos = 800;
+        int yPos = 140 + (10 * i);
+        
+        //get the ip and port of the client
+        string port = ofToString( TCP.getClientPort(i) );
+        string ip   = TCP.getClientIP(i);
+        string info = "client "+ofToString(i)+" -connected from "+ip+" on port: "+port;
+        string storeInfo = "stored frames: " + ofToString(storeText.size()) + " fIdx: " + ofToString(frameIndex);
 
 		//we only want to update the text we have recieved there is data
 		string str = TCP.receive(i);
@@ -119,19 +67,43 @@ void TCPClient::draw(){
             for(int i = 0; i < size; i++)
                 receivedChars[i] = 255  - str[i]; //invert values here because it doesn't work in maxscript
             pixels = receivedChars;
+            
+            //draw the info text and the received text bellow it
+            ofDrawBitmapString(info, xPos, yPos);
+            ofDrawBitmapString(storeInfo, xPos + 500, yPos);
 		}
-        
-
 	}
-    //ofDrawBitmapString( ofToString(ofGetFrameRate()), ofGetWidth() - 50, 20);
-	
     
+//    for(int i = 0; i < size; i++)
+//    {
+//        if(i > size/2)
+//        {
+//            //pixels[i] = (int) ofMap((float)i, 0, 255, 0, size);
+//            pixels[i] = 255;
+//        }
+//        else
+//            pixels[i] = 128;
+//    }
+//    
     if (bStop)
         drawPins(pixels);
 	else
         playBack(storeText, frameIndex, sequenceFPS, bPause, bStop);
 }
 
+//--------------------------------------------------------------
+
+void TCPClient::renderShape()
+{
+    
+}
+
+//--------------------------------------------------------------
+
+void TCPClient::renderGraphics(int x, int y, int w, int h)
+{
+    outImage.draw(x, y, w, h);
+}
 
 //--------------------------------------------------------------
 
@@ -157,93 +129,62 @@ void TCPClient::playBack(vector <string> & _strFrames, int & _frameIndex, int _s
 
 //--------------------------------------------------------------
 
-void TCPClient::drawPinsDebug(unsigned char * _theColors)
-{
-    glPushMatrix();
-	//ofTranslate(50, 200);
-    
-    int islandSpacer = 350;
-    int islandSize = size / 3;
-    int islands = 3;
-    int rows = 16;
-    int columns = 24;
-    
-    ofNoFill();
-    ofSetColor(255, 255, 255);
-    ofRect(-10, -10, 195, 282);
-    ofRect( islandSpacer - 10, -10, 195, 282);
-    ofRect( 2 * islandSpacer - 10, -10, 195, 282);
-    ofFill();
-    
-    for(int k = 0; k < islands; k++) // islands
-	{
-        for(int i = 0; i < columns; i++) // colums
-        {
-            for(int j = 0; j < rows; j++) // rows
-            {
-                rects.at((i * rows) + (k * islandSize) + j).x = (j * 11 + k * islandSpacer);
-				rects.at((i * rows) + (k * islandSize) + j).y = (i * 11);
-                ofSetColor(_theColors[(i * rows) + (k * islandSize) + j]);
-                //ofSetColor(128);
-				ofRect(rects.at((i * rows) + (k * islandSize) + j));
-                //ofSetColor(255,0,0);
-                //ofDrawBitmapString(ofToString((i * rows) + (k * islandSize) + j), rects.at((i * rows) + (k * islandSize) + j).x, rects.at((i * rows) + (k * islandSize) + j).y);
-            }
-        }
-    }
-    
-  	glPopMatrix();
-}
-
 void TCPClient::drawPins(unsigned char * _theColors)
 {
-    glPushMatrix();
+    ofPushMatrix();
 	//ofTranslate(50, 200);
     
     int xOffset = 13;
     int islandSpacer = 30; //350;
+    
     int islandSize = size / 3;
     int islands = 3;
-    int rows = 16;
-    int columns = 24;
+    int rows = 24;
+    int columns = 16;
+
+    outImage.begin();
     
-    ofNoFill();
-    ofSetColor(255, 255, 255);
-    //ofRect(-10, -10, 195, 282);
-    //ofRect( islandSpacer - 10, -10, 195, 282);
-    //ofRect( 2 * islandSpacer - 10, -10, 195, 282);
-    ofFill();
+    ofSetColor(0);
+    ofRect(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
     
+    //sort incoming data
     for(int k = 0; k < islands; k++) // islands
 	{
         for(int i = 0; i < columns; i++) // columns
         {
             for(int j = 0; j < rows; j++) // rows
             {
-                rects.at((i * rows) + (k * islandSize) + j).x = (xOffset + j + k * islandSpacer);
-				rects.at((i * rows) + (k * islandSize) + j).y = (i);
-                ofSetColor(_theColors[(i * rows) + (k * islandSize) + j]);
-                //ofSetColor(128);
-                //ofPoint(j + k*islandSpacer, i);
-				
+                //sort linear array to the 3 islands
+                int idx = (j * columns) + (k * islandSize) + i;
+               
+                int sortIdx = (k + i) * (rows) + j;
                 
-                ofRect(rects.at((i * rows) + (k * islandSize) + j));
+                rects.at(idx).setWidth(1);
+                rects.at(idx).setHeight(1);
                 
-                //ofSetColor(255,0,0);
-                //ofDrawBitmapString(ofToString((i * rows) + (k * islandSize) + j), rects.at((i * rows) + (k * islandSize) + j).x, rects.at((i * rows) + (k * islandSize) + j).y);
+                rects.at(idx).x = ( xOffset + (i + k * islandSpacer));
+				rects.at(idx).y = (j);
+                
+                ofSetColor(_theColors[idx]);
+                //draw values in sorted order
+                ofRect(rects.at(idx));
             }
         }
     }
     
-  	glPopMatrix();
+    outImage.end();
+    
+    outImage.draw(0, 0);
+  	ofPopMatrix();
 }
 
 //--------------------------------------------------------------
+
 void TCPClient::keyPressed(int key)
 {
     if (key == 'c')
         storeText.clear();
-    if (key == 'p') //toggle pause
+    if (key == 'x') //toggle pause
     {
         bPause = !bPause;
         bStop = false;
@@ -262,6 +203,7 @@ void TCPClient::keyPressed(int key)
 }
 
 //--------------------------------------------------------------
+
 void TCPClient::keyReleased(int key){
     
 }

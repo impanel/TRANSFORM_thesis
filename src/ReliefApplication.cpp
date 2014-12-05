@@ -111,6 +111,9 @@ void ReliefApplication::initalizeShapeObjects() {
     mImageShapeObject = new ImageShapeObject();
     mImageShapeObject->setup("images");
     
+    mTCPShapeObject = new TCPClient();
+    mTCPShapeObject->setup();
+    
     mHandShapeObject = new HandShapeObject();
     mHandShapeObject->setImageWarper(mImageWarper);
     mHandShapeObject->setKinectTracker(&mKinectTracker);
@@ -121,6 +124,7 @@ void ReliefApplication::initalizeShapeObjects() {
     allShapeObjects.push_back(mCalmShapeObject);
     allShapeObjects.push_back(mImageShapeObject);
     allShapeObjects.push_back(mHandShapeObject);
+    allShapeObjects.push_back(mTCPShapeObject);
 }
 
 
@@ -155,6 +159,7 @@ void ReliefApplication::setupEasyGui() {
     modes.push_back("machine loop");
     modes.push_back("escher standard");
     modes.push_back("escher drop/pickup");
+    modes.push_back("TCP");
     //modes.push_back("kinect hand");
     
     ofxUIRadio *easyRadio = easyGui->addRadio("MODES", modes);
@@ -324,8 +329,8 @@ void ReliefApplication::draw(){
 	int xVidPos			= 0;
 	int yVidPos			= 0;
     
-    if(currentScreen == "kinect") {
-        
+    if(currentScreen == "kinect")
+    {
         //cvColorImage.draw(xVidPos,yVidPos);
         mKinectTracker.drawColorImage(0,0, KINECT_X, KINECT_Y);
         if(mKinectTracker.useMask) mKinectTracker.mask.draw(xVidPos,yVidPos);
@@ -338,9 +343,10 @@ void ReliefApplication::draw(){
         mKinectTracker.drawThresholdImage(KINECT_X, KINECT_Y/2, KINECT_X/2, KINECT_Y/2);
         
         mImageWarper->drawWarpPoints();
-        
-    } else if(currentScreen == "shapeobject") {
-
+    }
+    
+    else if(currentScreen == "shapeobject")
+    {
         pinDisplayImage.draw(2, 2, 1020*0.6, 240*0.6);
         drawBitmapString("Pin Display Color Image (for projection if needed)", 10, 10);
         
@@ -358,6 +364,12 @@ void ReliefApplication::draw(){
         
         // each shape object can have a seperate gui
         mCurrentShapeObject->drawGuiScreen(1020*0.6+20, 0, KINECT_X * 0.5, KINECT_Y * 0.5);
+    }
+    
+    else if(currentScreen == "tcp")
+    {
+        mTCPShapeObject->update();
+        mCurrentShapeObject->renderGraphics(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
     }
     
     // draw simulation in all views if we want
@@ -467,10 +479,7 @@ void ReliefApplication::exit(){
     tableGui->saveSettings("table_settings.xml");
     kinectGui->saveSettings("kinect_settings.xml");
     mImageWarper->saveSettings("settings_warp_points.xml");
-    delete coolGui_1;
-    delete coolGui_2;
-    delete coolGui_3;
-    delete coolGui_4;
+
     delete guiTabBar;
     delete tableGui;
     delete kinectGui;
@@ -642,28 +651,6 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
             mCurrentShapeObject = mCalmShapeObject;
         }
         
-        else if(radio->getActiveName() == "scenario standard")
-        {
-            cout << "MODE - scenario standard" << endl;
-            //mCurrentShapeObjects.clear();
-            controlTimeline = true;
-            controlManual = false;
-            
-            mMachineAnimationShapeObject->playMovieByPath("FINAL.mov");
-            mMachineAnimationShapeObject->pause();
-        }
-        
-        else if(radio->getActiveName() == "machine loop")
-        {
-            cout << "MODE - machine loop" << endl;
-            //mCurrentShapeObjects.clear();
-            controlTimeline = true;
-            controlManual = false;
-            
-            mMachineAnimationShapeObject->playMovieByFilename("FINAL.mov");
-            mMachineAnimationShapeObject->pause();
-        }
-        
         else if(radio->getActiveName() == "escher standard")
         {
             cout << "MODE - escher standard" << endl;
@@ -702,6 +689,14 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
             
             //mCurrentShapeObjects.clear();
             mCurrentShapeObject = mHandShapeObject;
+        }
+        
+        else if(radio->getActiveName() == "TCP")
+        {
+            cout << "TCP" << endl;
+            controlManual = true;
+            
+            mCurrentShapeObject = mTCPShapeObject;
         }
     }
     

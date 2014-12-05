@@ -24,6 +24,7 @@
 #include "HandShapeObject.h"
 #include "ofxTimeline.h"
 #include "ofxUI.h"
+#include "TCPClient.h"
 
 // @todo see https://github.com/danomatika/ofxAppUtils for alternate quad wrapper, openGL based?
 
@@ -76,6 +77,7 @@ public:
     CalmShapeObject             * mCalmShapeObject; // calm shape object, does nothing but used to reset
     ImageShapeObject            * mImageShapeObject;;
     HandShapeObject             * mHandShapeObject;
+    TCPClient                   * mTCPShapeObject;
     
     ofxCvColorImage             cvColorImage;
     ofxCvColorImage             cvWarpedImage;
@@ -102,11 +104,6 @@ public:
     TableSimulator              * tableSimulation;
     
     ofxUITabBar                 * guiTabBar;
-    ofxUICanvas                 * coolGui_1;
-    ofxUICanvas                 * coolGui_2;
-    ofxUICanvas                 * coolGui_3;
-    ofxUICanvas                 * coolGui_4;
-    ofxUICanvas                 * coolGui_5; // Escher mode
     
     ofxUICanvas                 * easyGui;
     ofxUICanvas                 * tableGui;
@@ -121,7 +118,7 @@ public:
     // setup available screens
     // this is more robust then setting by integer
     // to reorder the screens change order in array.
-    string                      screens[3] = {"shapeobject", "kinect"};
+    string                      screens[3] = {"shapeobject", "kinect", "tcp"};
     int                         maxScreens = 3;
     int                         screenIndex = 0; // starting screen
     string                      currentScreen = screens[0];    bool                        bAnimationLooping = false;
