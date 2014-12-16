@@ -91,7 +91,7 @@ void TCPClient::update(){
 
 void TCPClient::renderShape()
 {
-    
+    outImage.draw(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y);
 }
 
 //--------------------------------------------------------------
@@ -177,30 +177,30 @@ void TCPClient::drawPins(unsigned char * _theColors)
 }
 //--------------------------------------------------------------
 
-//void TCPClient::togglePlay()
-//{
-//    bStop = !bStop;
-//    bPause = false;
-//    elapsedTime = ofGetElapsedTimef();
-//}
-//
-////--------------------------------------------------------------
-//
-//void TCPClient::togglePause()
-//{
-//    bPause = !bPause;
-//    bStop = false;
-//    if(bPause)
-//        pauseTime = ofGetElapsedTimef() - elapsedTime;
-//    else
-//        elapsedTime = ofGetElapsedTimef() - pauseTime;
-//}
-////--------------------------------------------------------------
-//
-//void TCPClient::clearFrames()
-//{
-//    storeText.clear();
-//}
+void TCPClient::togglePlay()
+{
+    bStop = !bStop;
+    bPause = false;
+    elapsedTime = ofGetElapsedTimef();
+}
+
+//--------------------------------------------------------------
+
+void TCPClient::togglePause()
+{
+    bPause = !bPause;
+    bStop = false;
+    if(bPause)
+        pauseTime = ofGetElapsedTimef() - elapsedTime;
+    else
+        elapsedTime = ofGetElapsedTimef() - pauseTime;
+}
+//--------------------------------------------------------------
+
+void TCPClient::clearFrames()
+{
+    storeText.clear();
+}
 //--------------------------------------------------------------
 
 void TCPClient::keyPressed(int key)
@@ -228,4 +228,11 @@ void TCPClient::keyPressed(int key)
 
 //--------------------------------------------------------------
 
-
+void TCPClient::setTableValuesForShape(ShapeIOManager *pIOManager)
+{
+    pIOManager->set_max_speed(200);
+    pIOManager->set_gain_p(1.5f);
+    pIOManager->set_gain_i(0.045f);
+    pIOManager->set_max_i(25);
+    pIOManager->set_deadzone(2);
+}

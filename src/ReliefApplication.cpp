@@ -430,18 +430,15 @@ void ReliefApplication::keyPressed(int key){
             break;
         case 'c':
         case 'C':
-            //mTCPShapeObject->clearFrames();
-            //mTCPShapeObject->keyPressed('c');
+            mTCPShapeObject->clearFrames();
             break;
         case 'x':
         case 'X':
-            //mTCPShapeObject->togglePlay();
-            //mTCPShapeObject->keyPressed('x');
+            mTCPShapeObject->togglePlay();
             break;
         case 'z':
         case 'Z':
-            //mTCPShapeObject->togglePause();
-            //mTCPShapeObject->keyPressed('z');
+            mTCPShapeObject->togglePause();
             break;
     }
     
