@@ -21,10 +21,10 @@
 #include "ofxOpenCv.h"
 
 
-class TCPClient : public ShapeObject{
-    
+class TCPClient : public ShapeObject
+{    
 public:
-    
+    TCPClient();
     void setup();
     void update();
     void drawDebug();

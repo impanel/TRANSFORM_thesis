@@ -79,7 +79,7 @@ void ReliefApplication::setup(){
 
 //--------------------------------------------------------------
 //
-// Initalize Shape objects, passking kinect and warper if needed
+// Initalize Shape objects, passing kinect and warper if needed
 // then add to shape object vector.
 //
 // @todo matt refactor this so shape objects register themselves

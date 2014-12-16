@@ -8,6 +8,8 @@
 
 #include "TCPClient.h"
 
+TCPClient::TCPClient(){};
+
 //--------------------------------------------------------------
 void TCPClient::setup(){
    
