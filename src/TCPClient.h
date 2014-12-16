@@ -40,12 +40,12 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    void playBack(vector <string> & _strFrames, int & _frameIndex, int _sequenceFPS, bool _pause, bool _play);
     
     void drawPinsDebug(unsigned char * _theColors);
     void drawPins(unsigned char * _theColors);
     void renderShape();
     void renderGraphics(int x, int y, int w, int h);
+    
     
     //void setTableValuesForShape(ShapeIOManager *pIOManager);
     //unsigned char* getPixels();
@@ -55,7 +55,12 @@ public:
     string get_shape_name() {return shape_name; };
     string shape_name = "tcp";
 
+//    void togglePlay();
+//    void togglePause();
+//    void clearFrames();
+
 private:
+    void playBack(vector <string> & _strFrames, int & _frameIndex, int _sequenceFPS, bool _pause, bool _play);
     vector <string> storeText;
     vector <ofRectangle> rects;
 

@@ -46,17 +46,7 @@ void TCPClient::update(){
     {
 		if(!TCP.isClientConnected(i) )continue;
         
-        //calculate where to draw the text
-        int xPos = 800;
-        int yPos = 140 + (10 * i);
-        
-        //get the ip and port of the client
-        string port = ofToString( TCP.getClientPort(i) );
-        string ip   = TCP.getClientIP(i);
-        string info = "client "+ofToString(i)+" -connected from "+ip+" on port: "+port;
-        string storeInfo = "stored frames: " + ofToString(storeText.size()) + " fIdx: " + ofToString(frameIndex);
-
-		//we only want to update the text we have recieved there is data
+        //we only want to update the text we have recieved there is data
 		string str = TCP.receive(i);
         
 		if(str.length() > 0)
@@ -67,24 +57,28 @@ void TCPClient::update(){
             for(int i = 0; i < size; i++)
                 receivedChars[i] = 255  - str[i]; //invert values here because it doesn't work in maxscript
             pixels = receivedChars;
-            
-            //draw the info text and the received text bellow it
-            ofDrawBitmapString(info, xPos, yPos);
-            ofDrawBitmapString(storeInfo, xPos + 500, yPos);
 		}
 	}
     
-//    for(int i = 0; i < size; i++)
-//    {
-//        if(i > size/2)
-//        {
-//            //pixels[i] = (int) ofMap((float)i, 0, 255, 0, size);
-//            pixels[i] = 255;
-//        }
-//        else
-//            pixels[i] = 128;
-//    }
-//    
+    
+    //draw info about TCP
+    if(TCP.isClientConnected(0))
+    {
+        //calculate where to draw the text
+        int xPos = 80;
+        int yPos = 150;
+        
+        //get the ip and port of the client
+        string port = ofToString( TCP.getClientPort(0) );
+        string ip   = TCP.getClientIP(0);
+        string info = "client "+ofToString(0)+" -connected from "+ip+" on port: "+port;
+        string storeInfo = "stored frames: " + ofToString(storeText.size()) + " fIdx: " + ofToString(frameIndex);
+        
+        //draw the info text and the received text bellow it
+        ofDrawBitmapString(info, xPos, yPos);
+        ofDrawBitmapString(storeInfo, xPos + 500, yPos);
+    }
+    
     if (bStop)
         drawPins(pixels);
 	else
@@ -175,9 +169,36 @@ void TCPClient::drawPins(unsigned char * _theColors)
     outImage.end();
     
     outImage.draw(0, 0);
+    
+    outImage.draw(0, 400, 102 * 5, 24 * 5);
   	ofPopMatrix();
 }
+//--------------------------------------------------------------
 
+//void TCPClient::togglePlay()
+//{
+//    bStop = !bStop;
+//    bPause = false;
+//    elapsedTime = ofGetElapsedTimef();
+//}
+//
+////--------------------------------------------------------------
+//
+//void TCPClient::togglePause()
+//{
+//    bPause = !bPause;
+//    bStop = false;
+//    if(bPause)
+//        pauseTime = ofGetElapsedTimef() - elapsedTime;
+//    else
+//        elapsedTime = ofGetElapsedTimef() - pauseTime;
+//}
+////--------------------------------------------------------------
+//
+//void TCPClient::clearFrames()
+//{
+//    storeText.clear();
+//}
 //--------------------------------------------------------------
 
 void TCPClient::keyPressed(int key)
@@ -186,6 +207,7 @@ void TCPClient::keyPressed(int key)
         storeText.clear();
     if (key == 'x') //toggle pause
     {
+        cout<<"pause"<<endl;
         bPause = !bPause;
         bStop = false;
         if(bPause)
@@ -193,7 +215,7 @@ void TCPClient::keyPressed(int key)
         else
             elapsedTime = ofGetElapsedTimef() - pauseTime;
     }
-    if (key == 'o') //toggle stop
+    if (key == 'z') //toggle stop
     {
         //stop
         bStop = !bStop;
@@ -204,41 +226,4 @@ void TCPClient::keyPressed(int key)
 
 //--------------------------------------------------------------
 
-void TCPClient::keyReleased(int key){
-    
-}
 
-//--------------------------------------------------------------
-void TCPClient::mouseMoved(int x, int y ){
-    
-}
-
-//--------------------------------------------------------------
-void TCPClient::mouseDragged(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void TCPClient::mousePressed(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void TCPClient::mouseReleased(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void TCPClient::windowResized(int w, int h){
-    
-}
-
-//--------------------------------------------------------------
-void TCPClient::gotMessage(ofMessage msg){
-    
-}
-
-//--------------------------------------------------------------
-void TCPClient::dragEvent(ofDragInfo dragInfo){ 
-    
-}

@@ -354,11 +354,11 @@ void ReliefApplication::draw(){
         //actual size height map image (102 * 24)
         pinHeightMapImage.draw(KINECT_Y*0.5 + 100, 240*0.6*2+30, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
         
-        tableSimulation->drawActualPinHeightImageFromTable(2, 240*0.6*3+20, RELIEF_PHYSICAL_SIZE_X * 6, RELIEF_PHYSICAL_SIZE_Y * 6);
+        //tableSimulation->drawActualPinHeightImageFromTable(2, 240*0.6*3+20, RELIEF_PHYSICAL_SIZE_X * 6, RELIEF_PHYSICAL_SIZE_Y * 6); //costly
         drawBitmapString("Actual Pin Height Image from Table", 10, 240*0.6*3+30);
         
         // each shape object can have a seperate gui
-        mCurrentShapeObject->drawGuiScreen(1020*0.6+20, 0, KINECT_X * 0.5, KINECT_Y * 0.5);
+        //mCurrentShapeObject->drawGuiScreen(1020*0.6+20, 0, KINECT_X * 0.5, KINECT_Y * 0.5);
     }
     
     else if(currentScreen == "tcp")
@@ -427,6 +427,21 @@ void ReliefApplication::keyPressed(int key){
         case 's':
         case 'S':
             mMachineAnimationShapeObject->stopNowPlaying(); // drops the video
+            break;
+        case 'c':
+        case 'C':
+            //mTCPShapeObject->clearFrames();
+            //mTCPShapeObject->keyPressed('c');
+            break;
+        case 'x':
+        case 'X':
+            //mTCPShapeObject->togglePlay();
+            //mTCPShapeObject->keyPressed('x');
+            break;
+        case 'z':
+        case 'Z':
+            //mTCPShapeObject->togglePause();
+            //mTCPShapeObject->keyPressed('z');
             break;
     }
     
