@@ -18,7 +18,7 @@ TableSimulator::TableSimulator(ShapeIOManager * shapeManager) {
 //--------------------------------------------------------------
 //
 // Setup interaction area for easyCam
-//
+//cam
 // Uses the viewport as container. To replace with smaller area
 // change value of vp
 //

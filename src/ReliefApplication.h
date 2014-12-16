@@ -17,12 +17,8 @@
 #include "MachineAnimationShapeObject.h"
 #include "CalmShapeObject.h"
 #include "FadeLoopShapeObject.h"
-#include "FlockShapeObject.h"
-#include "WavyShapeObject.h"
-#include "EscherShapeObject.h"
 #include "ImageShapeObject.h"
 #include "HandShapeObject.h"
-#include "ofxTimeline.h"
 #include "ofxUI.h"
 #include "TCPClient.h"
 
@@ -50,7 +46,7 @@ public:
     
     bool useLiveKinect;
     bool useRecording;
-    bool useTable = false;
+    bool useTable = true;
     bool drawTableSimulation = true;
     
     // table config variables
@@ -103,14 +99,16 @@ public:
     // to reorder the screens change order in array.
     TableSimulator              * tableSimulation;
     
-    ofxUITabBar                 * guiTabBar;
-    
     ofxUICanvas                 * easyGui;
-    ofxUICanvas                 * tableGui;
-    ofxUICanvas                 * kinectGui;
+    ofxUICanvas                 * imagesDropdown;
+    ofxUICanvas                 * videosDropdown;
+    ofxUICanvas                 * kinectRecordingsDropdown;
     
     void guiEvent(ofxUIEventArgs &e); // kinect uses this too
     void tableGuiEvent(ofxUIEventArgs &e); // seperate table callback
+    void setupVideosDropdown();
+    void setupKinectRecordingsDropdown();
+    void setupImagesDropdown();
     
     void pauseApp();
     void resumeApp();
@@ -127,12 +125,9 @@ private:
     Apex::ofxMovieExporter      movieExporter;
     void incrementAndSetCurrentScreen();
     void drawActualPinHeightImageFromTable(int x, int y, int w, int h);
-    void setupTimeline();
-    void setupTableGui();
-    void setupKinectGui();
-    void setupCoolGui();
     void setupEasyGui();
     void drawBitmapString(string _message, int _x, int _y);
+    void connectTable();
     
     void initalizeShapeObjects();
     void registerShapeObjectNamesForGui();

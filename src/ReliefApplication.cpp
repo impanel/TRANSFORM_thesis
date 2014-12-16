@@ -62,22 +62,13 @@ void ReliefApplication::setup(){
     
     // setup guis
     setupEasyGui();
-    setupKinectGui();
-    setupTableGui();
+    setupVideosDropdown();
+    setupImagesDropdown();
+    setupKinectRecordingsDropdown();
+    //setupTableGui();
     
     // load gui settings
-    kinectGui->loadSettings("kinect_settings.xml");
-    
-    // add al guis to tab bar
-    guiTabBar = new ofxUITabBar();
-    guiTabBar->addCanvas(kinectGui);
-    guiTabBar->addCanvas(tableGui);
-
-    guiTabBar->autoSizeToFitWidgets();
-    //(1020*0.6+20, 0, KINECT_X * 0.5, KINECT_Y * 0.5
-    guiTabBar->setPosition(1020 * 0.6 + 20, KINECT_Y * 0.5 + 20);
-    guiTabBar->setVisible(false);
-    
+    easyGui->loadSettings("kinect_settings.xml");
     
     // set default shape object
     // @todo matt refactor this because it requires setting gui
@@ -149,69 +140,102 @@ void ReliefApplication::registerShapeObjectNamesForGui() {
 //--------------------------------------------------------------
 void ReliefApplication::setupEasyGui() {
     easyGui = new ofxUICanvas;
-    easyGui->setPosition(1090, 560);
+    easyGui->setPosition(ofGetWidth() - 210, 0);
     easyGui->setHeight(500);
     easyGui->setName("Easy Control");
     easyGui->addLabel("Easy Control");
-    vector <string> modes;
     
+    //Toggle Buttons
+    easyGui->addToggle("Toggle Use Table", true);
+    easyGui->addToggle("Use Kinect Mask", &mKinectTracker.useMask);
+
+    
+    //Mode Buttons
+    vector <string> modes;
     modes.push_back("none");
-    modes.push_back("machine loop");
-    modes.push_back("escher standard");
-    modes.push_back("escher drop/pickup");
+    modes.push_back("videos");
+    modes.push_back("images");
     modes.push_back("TCP");
-    //modes.push_back("kinect hand");
     
     ofxUIRadio *easyRadio = easyGui->addRadio("MODES", modes);
     easyRadio->activateToggle("none");
-    ofAddListener(easyGui->newGUIEvent, this, &ReliefApplication::guiEvent);
     
+    //Kinect modes
+    vector <string> kinectModes;
+    kinectModes.push_back("Live Kinect");
+    kinectModes.push_back("Recorded Kinect");
+    
+    ofxUIRadio *kinectRadio = easyGui->addRadio("KINECT", kinectModes);
+    easyRadio->activateToggle("Live Kinect");
+    
+    //Sliders
+    easyGui->addIntSlider("Near Threshold", 0, 255, &mKinectTracker.mNearThreshold);
+    easyGui->addIntSlider("Far Threshold", 0, 255, &mKinectTracker.mFarThreshold);
+    easyGui->addIntSlider("Contour Min Size", 0, 15000, &mKinectTracker.mContourMinimumSize);
+    
+    easyGui->addSlider("P TERM", 0, 3, &gain_P);
+    easyGui->addSlider("I TERM", 0, 1, &gain_I);
+    easyGui->addIntSlider("Max I", 0, 200, &max_I);
+    easyGui->addIntSlider("deadzone", 0, 20, &deadZone);
+    easyGui->addIntSlider("Max Speed", 0, 220, &maxSpeed);
+    
+    ofAddListener(easyGui->newGUIEvent, this, &ReliefApplication::guiEvent);
+    easyGui->autoSizeToFitWidgets();
+    //tableGui->loadSettings("table_settings.xml");
 }
 
 //--------------------------------------------------------------
-//
-// Setup Kinect Gui
-//
-//--------------------------------------------------------------
-void ReliefApplication::setupKinectGui() {
-    kinectGui = new ofxUICanvas;
-    kinectGui->setName("Kinect Setup");
-    kinectGui->addLabel("Kinect Setup");
-    vector <string> sources;
-    sources.push_back("Live Kinect");
-    sources.push_back("Recorded Kinect");
-    ofxUIRadio *kinectRadio = kinectGui->addRadio("SOURCE", sources);
-    kinectRadio->activateToggle("Recorded Kinect");
-    
-    kinectGui->addIntSlider("Near Threshold", 0, 255, &mKinectTracker.mNearThreshold);
-    kinectGui->addIntSlider("Far Threshold", 0, 255, &mKinectTracker.mFarThreshold);
-    kinectGui->addIntSlider("Contour Min Size", 0, 15000, &mKinectTracker.mContourMinimumSize);
-    kinectGui->addToggle("Use Mask", &mKinectTracker.useMask);
-    ofxUIDropDownList *ddl = kinectGui->addDropDownList("RECORDING SOURCE", kinectVideoPlayer.loadedVideoFilenames);
+
+void ReliefApplication::setupVideosDropdown()
+{
+    videosDropdown = new ofxUICanvas;
+    videosDropdown->setPosition(ofGetWidth() - 4 * 210, 0);
+    videosDropdown->setName("Videos");
+    videosDropdown->addLabel("Videos");
+   
+    //Dropdown Menu for Videos
+    ofxUIDropDownList *ddl = videosDropdown->addDropDownList("video list", mMachineAnimationShapeObject->getLoadedVideoFilenames());
     ddl->setAllowMultiple(false);
     ddl->setAutoClose(true);
-    ofAddListener(kinectGui->newGUIEvent, this, &ReliefApplication::guiEvent);
-    kinectGui->autoSizeToFitWidgets();
+    
+    ofAddListener(videosDropdown->newGUIEvent, this, &ReliefApplication::guiEvent);
+    videosDropdown->autoSizeToFitWidgets();
 }
 
+//--------------------------------------------------------------
+
+void ReliefApplication::setupImagesDropdown()
+{
+    imagesDropdown = new ofxUICanvas;
+    imagesDropdown->setPosition(ofGetWidth() - 3 * 210, 0);
+    imagesDropdown->setName("Images");
+    imagesDropdown->addLabel("Images");
+    
+    //Dropwdown Menu for Images
+    ofxUIDropDownList *ddl = imagesDropdown->addDropDownList("images list", mImageShapeObject->getLoadedImagesFilenames());
+    ddl->setAllowMultiple(false);
+    ddl->setAutoClose(true);
+    
+    ofAddListener(imagesDropdown->newGUIEvent, this, &ReliefApplication::guiEvent);
+    imagesDropdown->autoSizeToFitWidgets();
+}
 
 //--------------------------------------------------------------
-//
-// Setup Table Gui
-//
-//--------------------------------------------------------------
-void ReliefApplication::setupTableGui() {
-    tableGui = new ofxUICanvas;
-    tableGui->setName("Default table values");
-    tableGui->addLabel("Default table values");
-    //tableGui->addTextArea("DESC", "These values will be overridden if current shape object has custom table terms");
-    tableGui->addSlider("P TERM", 0, 3, &gain_P);
-    tableGui->addSlider("I TERM", 0, 1, &gain_I);
-    tableGui->addIntSlider("Max I", 0, 200, &max_I);
-    tableGui->addIntSlider("deadzone", 0, 20, &deadZone);
-    tableGui->addIntSlider("Max Speed", 0, 220, &maxSpeed);
-    ofAddListener(tableGui->newGUIEvent, this, &ReliefApplication::tableGuiEvent);
-    tableGui->loadSettings("table_settings.xml");
+
+void ReliefApplication::setupKinectRecordingsDropdown()
+{
+    kinectRecordingsDropdown = new ofxUICanvas;
+    kinectRecordingsDropdown->setPosition(ofGetWidth() - 2 * 210, 0);
+    kinectRecordingsDropdown->setName("Kinect Recordings");
+    kinectRecordingsDropdown->addLabel("Kinect Recordings");
+    
+    //Dropdown Menu for Recorded Kinect Videos
+    ofxUIDropDownList *ddl = kinectRecordingsDropdown->addDropDownList("RECORDING SOURCE", kinectVideoPlayer.loadedVideoFilenames);
+    ddl->setAllowMultiple(false);
+    ddl->setAutoClose(true);
+    
+    ofAddListener(kinectRecordingsDropdown->newGUIEvent, this, &ReliefApplication::guiEvent);
+    kinectRecordingsDropdown->autoSizeToFitWidgets();
 }
 
 //--------------------------------------------------------------
@@ -273,7 +297,7 @@ void ReliefApplication::update(){
     ofSetColor(255);
     
     mCurrentShapeObject->renderGraphics(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
-
+    
     pinHeightMapImageSmall.end();
     //--------------------------------------------------------------
     
@@ -283,36 +307,7 @@ void ReliefApplication::update(){
     
     // update the table simulation, which is the rendered table graphic
     tableSimulation->update();
-    
-//    for(int i = 0; i < mCurrentShapeObjects.size(); i++) {
-//        cout << mCurrentShapeObjects[i]->get_shape_name() << endl;
-//    }
-//    cout << "----" << endl;
 }
-
-//--------------------------------------------------------------
-// Blends current shape objects together by
-// taking highest pixel value from each position in pixel array
-//--------------------------------------------------------------
-//void ReliefApplication::blendCurrentShapeObjectsByHighestValue() {
-//    
-//    targetPixels = new unsigned char[RELIEF_SIZE]; // create target matrix
-//    
-//    for(int i = 0; i < RELIEF_SIZE; i++) {
-//        targetPixels[i] = 0; // set all pixels to black
-//    }
-//    
-//    for(int i = 0; i < mCurrentShapeObjects.size(); i++) { // for each shape object
-//        compPixels = new unsigned char[RELIEF_SIZE];
-//        compPixels = mCurrentShapeObjects[i]->getPixels(); // get shape object pixels
-//        
-//        for(int i = 0; i < RELIEF_SIZE; i++) { // for each pixel
-//            if(compPixels[i] > targetPixels[i]) { // if pixel is greater then target pixel value
-//                targetPixels[i] = compPixels[i]; // replace target value with this value
-//            }
-//        }
-//    }
-//}
 
 //--------------------------------------------------------------
 //
@@ -374,7 +369,7 @@ void ReliefApplication::draw(){
     
     // draw simulation in all views if we want
     // be careful as this slows performance
-    if(drawTableSimulation && !useTable) {
+    if(drawTableSimulation) {
         tableSimulation->drawTableCamView(400, 320, 680, 480, 4);
         tableSimulation->drawInteractionArea(400, 320, 680, 480);
     }
@@ -422,16 +417,6 @@ void ReliefApplication::keyPressed(int key){
             if(isPaused) pauseApp();
             else resumeApp();
             break;
-        case 'g':
-        case 'G':
-            if(guiTabBar->isVisible()) {
-                guiTabBar->setVisible(false);
-                tableGui->setVisible(false);
-                kinectGui->setVisible(false);
-            }
-            else
-                guiTabBar->setVisible(true);
-            break;
         case 't':
         case 'T':
             drawTableSimulation = !drawTableSimulation;
@@ -466,8 +451,6 @@ void ReliefApplication::mousePressed(int x, int y, int button){
 //------------------------------------------------------------
 void ReliefApplication::exit(){
     
-    controlTimeline = false;
-    controlManual = true;
     mImageShapeObject->drawImageByFileName("exit.jpg");
     //mCurrentShapeObjects.clear();
     mCurrentShapeObject = mImageShapeObject;
@@ -476,21 +459,15 @@ void ReliefApplication::exit(){
     
     //mIOManager->disconnectFromTable();
     mIOManager->disconnectFromTableWithoutPinReset();
-    tableGui->saveSettings("table_settings.xml");
-    kinectGui->saveSettings("kinect_settings.xml");
+    //tableGui->saveSettings("table_settings.xml");
+    easyGui->saveSettings("kinect_settings.xml");
     mImageWarper->saveSettings("settings_warp_points.xml");
 
-    delete guiTabBar;
-    delete tableGui;
-    delete kinectGui;
+    delete easyGui;
+    delete imagesDropdown;
+    delete videosDropdown;
+    delete kinectRecordingsDropdown;
 }
-
-
-//mIOManager->set_gain_p(value);
-//mIOManager->set_gain_i(value);
-//mIOManager->set_max_i(value);
-//mIOManager->set_deadzone(value);
-//mIOManager->set_max_speed(value);
 
 //------------------------------------------------------------
 void ReliefApplication::tableGuiEvent(ofxUIEventArgs &e) {
@@ -508,10 +485,14 @@ void ReliefApplication::tableGuiEvent(ofxUIEventArgs &e) {
     
 }
 
+//------------------------------------------------------------
+
 void ReliefApplication::pauseApp() {
     kinectVideoPlayer.pause();
     cout << "pause" << endl;
 }
+
+//------------------------------------------------------------
 
 void ReliefApplication::resumeApp() {
     kinectVideoPlayer.resume();
@@ -520,24 +501,27 @@ void ReliefApplication::resumeApp() {
 
 
 //------------------------------------------------------------
-void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
-    
-    cout << "Event fired: " << e.getName() << endl;
-    
-    if(e.getName() == "PAUSE APP") {
-        if(isPaused) pauseApp();
-        else resumeApp();
-    } else if(e.getName() == "Animation") {
-        
+void ReliefApplication::guiEvent(ofxUIEventArgs &e)
+{
+    //cout << "Event fired: " << e.getName() << endl;
+    if(e.getName() == "video list")
+    {
         ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
         vector<ofxUIWidget *> &selected = ddlist->getSelected();
         for(int i = 0; i < selected.size(); i++)
         {
             cout << "SELECTED VIDEO: " << selected[i]->getName() << endl;
+            //mCurrentShapeObject = mMachineAnimationShapeObject;
             mMachineAnimationShapeObject->playMovieByFilename(selected[i]->getName());
+            mMachineAnimationShapeObject->reset();
+            mMachineAnimationShapeObject->setLooping(true);
+            mMachineAnimationShapeObject->resume();
+            cout<<"play"<<endl;
         }
-    } else if(e.getName() == "Still Images"){
-        
+    }
+    
+    else if(e.getName() == "images list")
+    {
         ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
         vector<ofxUIWidget *> &selected = ddlist->getSelected();
         for(int i = 0; i < selected.size(); i++)
@@ -545,9 +529,10 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
            cout << "SELECTED IMAGE: " << selected[i]->getName() << endl;
            mImageShapeObject->drawImageByFileName(selected[i]->getName());
         }
-        
-    } else if(e.getName() == "RECORDING SOURCE") {
-      
+    }
+    
+    else if(e.getName() == "RECORDING SOURCE")
+    {
         ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
         vector<ofxUIWidget *> &selected = ddlist->getSelected();
         for(int i = 0; i < selected.size(); i++)
@@ -555,88 +540,25 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
             cout << "SELECTED: " << selected[i]->getName() << endl;
             kinectVideoPlayer.playByFilename(selected[i]->getName());
         }
-        
-    } if(e.getName() == "SOURCE") {
-        
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        if(radio->getActiveName() == "Live Kinect") {
-            cout << "SOURCE - live kinect" << endl;
-            useLiveKinect = true; //  @todo fix this when refactoring how we get kinect
-            useRecording = false;
-        } else if(radio->getActiveName() == "Recorded Kinect") {
-            cout << "SOURCE - recorded kinect" << endl;
-            useLiveKinect = true;
-            useRecording = true;
-        }
-        
-    } else if(e.getName() == "Use Table") {
-        
+    }
+    
+    else if(e.getName() == "Toggle Use Table")
+    {
         ofxUIToggle *toggle = e.getToggle();
-        if(toggle->getValue()  == true) {
-            
-            cout << "Using table, trying to connect" << endl;
-            
-            // start table connection
-            mIOManager->connectToTable();
-            
-            mIOManager->set_gain_p(gain_P);
-            mIOManager->set_gain_i(gain_I);
-            mIOManager->set_max_i(max_I);
-            mIOManager->set_deadzone(deadZone);
-            mIOManager->set_max_speed(maxSpeed);
-            
-        } else if(e.getName() == "Loop Animations"){
-            ofxUIToggle *toggle = e.getToggle();
-            if(toggle->getValue() == true) bAnimationLooping = true;
-            else bAnimationLooping = false;
-            mMachineAnimationShapeObject->setLooping(bAnimationLooping);
-        } else {
-            
+        if(toggle->getValue()  == true)
+        {
+            connectTable();
+        }
+        else
+        {
             cout << "NOT Using table, closing connection" << endl;
-            
             // close connection
             mIOManager->disconnectFromTable();
         }
-        
-    } else if(e.getName() == "BACKGROUND") {
-        
-        ofxUISlider *slider = e.getSlider();
-        ofBackground(slider->getScaledValue());
-     
-    } else if (e.getName() == "MANUAL CONTROL") {
-        
-        ofxUIToggle *toggle = e.getToggle();
-        if(toggle->getValue() == true) {
-        
-            controlTimeline = false;
-            controlManual = true;
-            
-    } else {
-            mMachineAnimationShapeObject->playMovieByFilename("FINAL.mov");
-            mMachineAnimationShapeObject->pause();
-            
-            // ensure machine animation is loaded again
-            // in case user was overriding with manual control
-            //mMachineAnimationShapeObject->setNowPlaying(*timeline.getVideoTrack("Machine Animation")->getPlayer());
-        }
-    
-    } else if (e.getName() == "FULLSCREEN") {
-        
-        ofxUIToggle *toggle = e.getToggle();
-        ofSetFullscreen(toggle->getValue());
-        
-    } else if(e.getName() == "ACTIVE SHAPE OBJECT") {
-        
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        cout << radio->getName() << " value: " << radio->getValue() << " active name: " << radio->getActiveName() << endl;
-        
-        //mCurrentShapeObjects.clear();
-        mCurrentShapeObject = allShapeObjects.at(radio->getValue());
-        
     }
+
     
-    //Easy Gui
-    
+    //MODES
     if(e.getName() == "MODES")
     {
         ofxUIRadio *radio = (ofxUIRadio *) e.widget;
@@ -644,62 +566,47 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
         if(radio->getActiveName() == "none")
         {
             cout << "MODE - none" << endl;
-            controlTimeline = false;
-            controlManual = true;
-            
             //mCurrentShapeObjects.clear();
             mCurrentShapeObject = mCalmShapeObject;
         }
         
-        else if(radio->getActiveName() == "escher standard")
+        else if(radio->getActiveName() == "videos")
         {
-            cout << "MODE - escher standard" << endl;
-            controlTimeline = false;
-            controlManual = true;
-            
-            //mCurrentShapeObjects.clear();
-            mMachineAnimationShapeObject->playMovieByFilename("escher_3_slow_5.mov");
-
+            cout<<"video"<<endl;
             mCurrentShapeObject = mMachineAnimationShapeObject;
-            mMachineAnimationShapeObject->reset();
-            mMachineAnimationShapeObject->setLooping(true);
-            mMachineAnimationShapeObject->resume();
-            
         }
         
-        else if(radio->getActiveName() == "escher drop/pickup")
+        else if(radio->getActiveName() == "images")
         {
-            cout << "escher drop/pickup" << endl;
-            controlTimeline = false;
-            controlManual = true;
-            
-            //mCurrentShapeObjects.clear();
-            mCurrentShapeObject = mMachineAnimationShapeObject;
-            mMachineAnimationShapeObject->playMovieByFilename("escher_3_slow_3.mov");
-            mMachineAnimationShapeObject->reset();
-            mMachineAnimationShapeObject->setLooping(true);
-            mMachineAnimationShapeObject->resume();
-        }
-        
-        else if(radio->getActiveName() == "kinect hand")
-        {
-            cout << "kinect hand" << endl;
-            controlTimeline = false;
-            controlManual = true;
-            
-            //mCurrentShapeObjects.clear();
-            mCurrentShapeObject = mHandShapeObject;
+            cout << "images" << endl;
+            mCurrentShapeObject = mImageShapeObject;
         }
         
         else if(radio->getActiveName() == "TCP")
         {
             cout << "TCP" << endl;
-            controlManual = true;
-            
             mCurrentShapeObject = mTCPShapeObject;
         }
     }
     
+    //KINECT Modes
+    if(e.getName() == "KINECT")
+    {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        
+        if(radio->getActiveName() == "Live Kinect")
+        {
+            cout << "SOURCE - live kinect" << endl;
+            useLiveKinect = true; //  @todo fix this when refactoring how we get kinect
+            useRecording = false;
+        }
+        else if(radio->getActiveName() == "Recorded Kinect")
+        {
+            cout << "SOURCE - recorded kinect" << endl;
+            useLiveKinect = true;
+            useRecording = true;
+        }
+    }
 };
 
 //------------------------------------------------------------
@@ -709,7 +616,8 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e) {
 // change array order in header file.
 //
 //------------------------------------------------------------
-void ReliefApplication::incrementAndSetCurrentScreen() {
+void ReliefApplication::incrementAndSetCurrentScreen()
+{
     screenIndex ++;
     if(screenIndex > maxScreens-1) screenIndex = 0;
     currentScreen = screens[screenIndex];
@@ -723,5 +631,21 @@ void ReliefApplication::drawBitmapString(string _message, int _x, int _y)
     ofDrawBitmapString(_message, _x, _y);
     ofPopStyle();
 }
+//------------------------------------------------------------
+
+void ReliefApplication::connectTable()
+{
+    cout << "Using table, trying to connect" << endl;
+    
+    // start table connection
+    mIOManager->connectToTable();
+    
+    mIOManager->set_gain_p(gain_P);
+    mIOManager->set_gain_i(gain_I);
+    mIOManager->set_max_i(max_I);
+    mIOManager->set_deadzone(deadZone);
+    mIOManager->set_max_speed(maxSpeed);
+}
+
 //------------------------------------------------------------
 
