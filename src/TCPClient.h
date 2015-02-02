@@ -70,7 +70,6 @@ private:
     string receivedText;
     
     ofFbo outImage;
-
 };
 
 
