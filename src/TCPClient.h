@@ -37,7 +37,7 @@ public:
     void renderGraphics(int x, int y, int w, int h);
     
     
-    //void setTableValuesForShape(ShapeIOManager *pIOManager);
+    void setTableValuesForShape(ShapeIOManager *pIOManager);
     //unsigned char* getPixels();
     
     ofxTCPServer TCP;
@@ -45,9 +45,9 @@ public:
     string get_shape_name() {return shape_name; };
     string shape_name = "tcp";
 
-//    void togglePlay();
-//    void togglePause();
-//    void clearFrames();
+    void togglePlay();
+    void togglePause();
+    void clearFrames();
 
 private:
     void playBack(vector <string> & _strFrames, int & _frameIndex, int _sequenceFPS, bool _pause, bool _play);
