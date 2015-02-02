@@ -169,7 +169,6 @@ void TCPClient::drawPins(unsigned char * _theColors)
     }
     
     outImage.end();
-    
     outImage.draw(0, 0);
     
     outImage.draw(0, 400, 102 * 5, 24 * 5);
