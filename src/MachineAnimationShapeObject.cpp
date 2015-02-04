@@ -53,7 +53,7 @@ void MachineAnimationShapeObject::renderGraphics(int x, int y, int w, int h) {
 }
 
 void MachineAnimationShapeObject::renderShape() {
-    machineAnimationVideoPlayer.drawNowPlaying(0,0,RELIEF_PROJECTOR_SIZE_X,RELIEF_PROJECTOR_SIZE_Y);
+    machineAnimationVideoPlayer.drawNowPlaying(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
 }
 
 void MachineAnimationShapeObject::drawGuiScreen(int x, int y, int w, int h) {

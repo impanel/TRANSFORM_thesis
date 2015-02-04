@@ -1,0 +1,80 @@
+<Widget>
+    <Kind>2</Kind>
+    <Name>Toggle Use Table</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>Use Kinect Mask</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>none</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>videos</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>images</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>TCP</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>Live Kinect</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>Recorded Kinect</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>Near Threshold</Name>
+    <Value>123</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>Far Threshold</Name>
+    <Value>32</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>Contour Min Size</Name>
+    <Value>369</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>P TERM</Name>
+    <Value>0.500000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>I TERM</Name>
+    <Value>0.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>Max I</Name>
+    <Value>60</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>deadzone</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>Max Speed</Name>
+    <Value>220</Value>
+</Widget>

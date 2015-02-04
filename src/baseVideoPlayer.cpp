@@ -155,7 +155,7 @@ void BaseVideoPlayer::reset() {
 
 void BaseVideoPlayer::drawNowPlaying(int x, int y, int w, int h) {
     if(nowPlaying.isPlaying() || nowPlaying.isPaused()) {
-        nowPlaying.draw(x,y,w,h);
+        nowPlaying.draw(x, y, w, h);
     }
 }
 

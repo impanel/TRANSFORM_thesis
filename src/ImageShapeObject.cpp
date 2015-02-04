@@ -58,14 +58,15 @@ void ImageShapeObject::update(float dt)
 
 void ImageShapeObject::renderShape()
 {
-    if(nowDrawing.bAllocated()) nowDrawing.draw(0,0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y);
+    if(nowDrawing.bAllocated()) nowDrawing.draw(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
 }
 
 //----------------------------------------------------
 
 void ImageShapeObject::renderGraphics(int x, int y, int w, int h)
 {
-    if(nowDrawing.bAllocated()) nowDrawing.draw(0,0);
+    if(nowDrawing.bAllocated()) nowDrawing.draw(x, y, w, h);
+    
 }
 
 //----------------------------------------------------

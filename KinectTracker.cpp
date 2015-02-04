@@ -201,7 +201,13 @@ void KinectTracker::drawColorImage(int x, int y, int width, int height) {
 void KinectTracker::drawThresholdImage(int x, int y, int width, int height){
     ofSetColor(255);
     depthImg.draw(x, y, width, height);
+    
+    //use matrix stack to be able to translate and scale contourFinder
+    ofPushMatrix();
+    ofTranslate(x, y);
+    ofScale(((float)width / 640.0), ((float) height / 480.0));
     contourFinder.draw(x, y, width, height);
+    ofPopMatrix();
 }
 
 // draw from the live kinect

@@ -81,8 +81,8 @@ public:
     ShapeIOManager              * mIOManager; // manages communication with the pin display
     
     ofFbo                       pinDisplayImage; //FBO where we render graphics for pins
-    ofFbo                       pinHeightMapImage; //FBO where we render height map
-    ofFbo                       pinHeightMapImageSmall; //FBO where we render height map
+    ofFbo                       pinHeightMapImageForGraphic; //FBO where we render height map for Graphic display
+    ofFbo                       pinHeightMapImageForTable; //FBO where we render height map for Table
     ofFbo                       pinHeightMapImage2;
     
     KinectTracker               mKinectTracker;

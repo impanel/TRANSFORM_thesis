@@ -12,13 +12,9 @@ void ReliefApplication::setup(){
     mImageWarper = new ImageWarper(0,0,RELIEF_PROJECTOR_SIZE_X,RELIEF_PROJECTOR_SIZE_Y);
     mImageWarper->loadSettings("settings_warp_points.xml");
     
-    
-    // setup kinect if using
-    // @todo we only want to setup if connected
-    // @note currently if you change the kinect setting you must restart
 #ifdef KINECT
     mKinectTracker.setup();
-
+    mKinectTracker.useMask = false;
     
     // module for saving recordings from kinect
     // @todo matt refactor to class
@@ -44,9 +40,9 @@ void ReliefApplication::setup(){
     // allocate general images
     // @note RELIEF_PHYSICAL vs RELIEF_PROJECTOR
     pinDisplayImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y, GL_RGB);
-    pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y, GL_RGBA);
-    pinHeightMapImageSmall.allocate(RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y, GL_RGBA);
-    pinHeightMapImageSmall.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+    pinHeightMapImageForGraphic.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y, GL_RGBA);
+    pinHeightMapImageForTable.allocate(RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y, GL_RGBA);
+    pinHeightMapImageForTable.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
     
     //#phil
     pinHeightMapImage2.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y, GL_RGBA);
@@ -68,7 +64,7 @@ void ReliefApplication::setup(){
     //setupTableGui();
     
     // load gui settings
-    easyGui->loadSettings("kinect_settings.xml");
+    easyGui->loadSettings("settings.xml");
     
     // set default shape object
     // @todo matt refactor this because it requires setting gui
@@ -145,11 +141,12 @@ void ReliefApplication::setupEasyGui() {
     easyGui->setName("Easy Control");
     easyGui->addLabel("Easy Control");
     
+    bool connectTable = false;
+    
     //Toggle Buttons
-    easyGui->addToggle("Toggle Use Table", true);
+    easyGui->addToggle("Toggle Use Table", false);
     easyGui->addToggle("Use Kinect Mask", &mKinectTracker.useMask);
 
-    
     //Mode Buttons
     vector <string> modes;
     modes.push_back("none");
@@ -181,7 +178,6 @@ void ReliefApplication::setupEasyGui() {
     
     ofAddListener(easyGui->newGUIEvent, this, &ReliefApplication::guiEvent);
     easyGui->autoSizeToFitWidgets();
-    //tableGui->loadSettings("table_settings.xml");
 }
 
 //--------------------------------------------------------------
@@ -284,26 +280,26 @@ void ReliefApplication::update(){
     // which is then used for the small image
     // we need to clean this up in the shape objects
     
-    pinHeightMapImage.begin();
+    pinHeightMapImageForGraphic.begin();
     ofBackground(0);
     ofSetColor(255);
-    mCurrentShapeObject->renderShape();
-    pinHeightMapImage.end();
+    mCurrentShapeObject->renderGraphics(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y);
+    pinHeightMapImageForGraphic.end();
     
     //--------------------------------------------------------------
     // draw the big heightmap image into a small heightmap image and send it off to the table
-    pinHeightMapImageSmall.begin();
+    pinHeightMapImageForTable.begin();
     ofBackground(0);
     ofSetColor(255);
     
-    mCurrentShapeObject->renderGraphics(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
+    mCurrentShapeObject->renderShape();
     
-    pinHeightMapImageSmall.end();
+    pinHeightMapImageForTable.end();
     //--------------------------------------------------------------
     
     // updates the table with the small rendered pinHeightMapImage
     // will use the last height map buffer image
-    mIOManager->update(pinHeightMapImageSmall);
+    mIOManager->update(pinHeightMapImageForTable);
     
     // update the table simulation, which is the rendered table graphic
     tableSimulation->update();
@@ -329,7 +325,7 @@ void ReliefApplication::draw(){
         //cvColorImage.draw(xVidPos,yVidPos);
         mKinectTracker.drawColorImage(0,0, KINECT_X, KINECT_Y);
         if(mKinectTracker.useMask) mKinectTracker.mask.draw(xVidPos,yVidPos);
-        drawBitmapString("Masked Kinect 8-bit Image", 10, 10);
+        drawBitmapString("Kinect RGB Image", 10, 10);
         
         cvWarpedImage.draw(0,KINECT_Y, cvWarpedImage.width/2, cvWarpedImage.height/2);
         mKinectTracker.drawDepthThreshedDiff(KINECT_X, 0, KINECT_X/2, KINECT_Y/2);
@@ -345,17 +341,17 @@ void ReliefApplication::draw(){
         pinDisplayImage.draw(2, 2, 1020*0.6, 240*0.6);
         drawBitmapString("Pin Display Color Image (for projection if needed)", 10, 10);
         
-        pinHeightMapImage.draw(2, 240*0.6+10, 1020*0.6, 240*0.6);
+        pinHeightMapImageForGraphic.draw(2, 240*0.6+10, 1020*0.6, 240*0.6);
         drawBitmapString("Pin Height Map Image (the actual grey values send to the table)", 10, 240*0.6+20);
         
         mKinectTracker.drawThresholdImage(2, 240*0.6*2+20, KINECT_X * 0.5, KINECT_Y * 0.5);
         drawBitmapString("Kinect Threshold Image", 10, 240*0.6*2+30);
         
         //actual size height map image (102 * 24)
-        pinHeightMapImage.draw(KINECT_Y*0.5 + 100, 240*0.6*2+30, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
+        //pinHeightMapImageForGraphic.draw(KINECT_Y*0.5 + 100, 240*0.6*2+30, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
         
-        //tableSimulation->drawActualPinHeightImageFromTable(2, 240*0.6*3+20, RELIEF_PHYSICAL_SIZE_X * 6, RELIEF_PHYSICAL_SIZE_Y * 6); //costly
-        drawBitmapString("Actual Pin Height Image from Table", 10, 240*0.6*3+30);
+        tableSimulation->drawActualPinHeightImageFromTable(2, 550, RELIEF_PHYSICAL_SIZE_X * 6, RELIEF_PHYSICAL_SIZE_Y * 6); //costly
+        drawBitmapString("Actual Pin Height Image from Table", 10, 550 + 10);
         
         // each shape object can have a seperate gui
         //mCurrentShapeObject->drawGuiScreen(1020*0.6+20, 0, KINECT_X * 0.5, KINECT_Y * 0.5);
@@ -364,7 +360,7 @@ void ReliefApplication::draw(){
     else if(currentScreen == "tcp")
     {
         mTCPShapeObject->update();
-        mCurrentShapeObject->renderGraphics(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
+        mCurrentShapeObject->renderShape();
     }
     
     // draw simulation in all views if we want
@@ -388,11 +384,10 @@ void ReliefApplication::draw(){
 void ReliefApplication::drawGeneralMessage() {
 	ofPushStyle();
     ofSetColor(255);
-	string msg = "Press '=' to toggle between timeline, kinect, and shapeobject screens.";
-    msg += "\nPress `t` to show / hide the table simulation and increase performance.";
-    msg += "\nPress `g` to show / hide the gui.";
+	string msg = "Press '=' to toggle between shapeobject, kinect and TCP screens.";
+    msg += "\nPress `t` to show / hide the table simulation.";
 	msg += "\n\nfps: " + ofToString(ofGetFrameRate(), 2);
-	ofDrawBitmapStringHighlight(msg, 10, ofGetWindowHeight()-100);
+	ofDrawBitmapStringHighlight(msg, 10, ofGetWindowHeight()-50);
     ofPopStyle();
 }
 
@@ -440,6 +435,9 @@ void ReliefApplication::keyPressed(int key){
         case 'Z':
             mTCPShapeObject->togglePause();
             break;
+        case 'l':
+            
+            break;
     }
     
     //recorder.keyPressed(key);
@@ -471,8 +469,7 @@ void ReliefApplication::exit(){
     
     //mIOManager->disconnectFromTable();
     mIOManager->disconnectFromTableWithoutPinReset();
-    //tableGui->saveSettings("table_settings.xml");
-    easyGui->saveSettings("kinect_settings.xml");
+    easyGui->saveSettings("settings.xml");
     mImageWarper->saveSettings("settings_warp_points.xml");
 
     delete easyGui;
@@ -557,6 +554,10 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
     else if(e.getName() == "Toggle Use Table")
     {
         ofxUIToggle *toggle = e.getToggle();
+        
+//        cout<< "TABLE------------- " << endl;
+//        cout<< toggle->getValue() << endl;
+        
         if(toggle->getValue()  == true)
         {
             connectTable();
@@ -651,7 +652,7 @@ void ReliefApplication::connectTable()
     
     // start table connection
     mIOManager->connectToTable();
-    
+
     mIOManager->set_gain_p(gain_P);
     mIOManager->set_gain_i(gain_I);
     mIOManager->set_max_i(max_I);

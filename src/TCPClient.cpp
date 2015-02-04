@@ -91,7 +91,7 @@ void TCPClient::update(){
 
 void TCPClient::renderShape()
 {
-    outImage.draw(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_Y);
+    outImage.draw(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
 }
 
 //--------------------------------------------------------------
