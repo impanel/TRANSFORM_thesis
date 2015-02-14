@@ -18,6 +18,7 @@
 #include "CalmShapeObject.h"
 #include "FadeLoopShapeObject.h"
 #include "ImageShapeObject.h"
+#include "GUIShapeObject.h"
 #include "HandShapeObject.h"
 #include "ofxUI.h"
 #include "TCPClient.h"
@@ -72,6 +73,7 @@ public:
     MachineAnimationShapeObject * mMachineAnimationShapeObject;
     CalmShapeObject             * mCalmShapeObject; // calm shape object, does nothing but used to reset
     ImageShapeObject            * mImageShapeObject;;
+    GUIShapeObject              * mGUIShapeObject;;
     HandShapeObject             * mHandShapeObject;
     TCPClient                   * mTCPShapeObject;
     
@@ -103,11 +105,13 @@ public:
     ofxUICanvas                 * imagesDropdown;
     ofxUICanvas                 * videosDropdown;
     ofxUICanvas                 * kinectRecordingsDropdown;
+    ofxUICanvas                 * pinMatrixManipulator;
     
     void guiEvent(ofxUIEventArgs &e); // kinect uses this too
     void tableGuiEvent(ofxUIEventArgs &e); // seperate table callback
     void setupVideosDropdown();
     void setupKinectRecordingsDropdown();
+    void setupPinMatrixManipulator();
     void setupImagesDropdown();
     
     void pauseApp();
@@ -134,4 +138,8 @@ private:
     bool isPaused = false;
 
     void blendCurrentShapeObjectsByHighestValue();
+    
+    ofxUIToggleMatrix *pinMatrix0, *pinMatrix1, *pinMatrix2;
+    ofxUIWidget *activePinMatrixManipulator;
+    void updateActivePinMatrixManipulator(ofxUIWidget *manipulator);
 };

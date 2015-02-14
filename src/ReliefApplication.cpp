@@ -61,7 +61,7 @@ void ReliefApplication::setup(){
     setupVideosDropdown();
     setupImagesDropdown();
     setupKinectRecordingsDropdown();
-    //setupTableGui();
+    setupPinMatrixManipulator();
     
     // load gui settings
     easyGui->loadSettings("settings.xml");
@@ -97,6 +97,9 @@ void ReliefApplication::initalizeShapeObjects() {
     
     mImageShapeObject = new ImageShapeObject();
     mImageShapeObject->setup("images");
+    
+    mGUIShapeObject = new GUIShapeObject();
+    mGUIShapeObject->setup();
     
     mTCPShapeObject = new TCPClient();
     mTCPShapeObject->setup();
@@ -152,6 +155,7 @@ void ReliefApplication::setupEasyGui() {
     modes.push_back("none");
     modes.push_back("videos");
     modes.push_back("images");
+    modes.push_back("gui");
     modes.push_back("TCP");
     
     ofxUIRadio *easyRadio = easyGui->addRadio("MODES", modes);
@@ -232,6 +236,45 @@ void ReliefApplication::setupKinectRecordingsDropdown()
     
     ofAddListener(kinectRecordingsDropdown->newGUIEvent, this, &ReliefApplication::guiEvent);
     kinectRecordingsDropdown->autoSizeToFitWidgets();
+}
+
+//--------------------------------------------------------------
+
+void ReliefApplication::setupPinMatrixManipulator()
+{
+    pinMatrixManipulator = new ofxUICanvas();
+    pinMatrixManipulator->setPosition(ofGetWidth() - 3 * 210 - 30, 50);
+    pinMatrixManipulator->setName("Pin Matrix Manipulator");
+    pinMatrixManipulator->addLabel("Pin Matrix Manipulator");
+    
+    //Toggle Matrices for Pin Selection
+    pinMatrix0 = new ofxUIToggleMatrix(7, 7, RELIEF_PHYSICAL_SIZE_Y, PINBLOCK_0_WIDTH, "table matrix:0");
+    pinMatrix1 = new ofxUIToggleMatrix(7, 7, RELIEF_PHYSICAL_SIZE_Y, PINBLOCK_1_WIDTH, "table matrix:1");
+    pinMatrix2 = new ofxUIToggleMatrix(7, 7, RELIEF_PHYSICAL_SIZE_Y, PINBLOCK_2_WIDTH, "table matrix:2");
+    pinMatrixManipulator->addWidgetDown(pinMatrix0);
+    pinMatrixManipulator->addWidgetRight(pinMatrix1);
+    pinMatrixManipulator->addWidgetRight(pinMatrix2);
+    
+    //Height Sliders and Some Buttons for Manipulating Selected Pins
+    ofxUIIntSlider *heightSlider = new ofxUIIntSlider("height", 0, 255, 0, 60, 10);
+    ofxUIIntSlider *relativeHeightSlider = new ofxUIIntSlider("relative height", -255, 255, 0, 120, 10);
+    ofxUIButton *undoButton = new ofxUIButton("undo", false, 20, 20);
+    ofxUIButton *clearTogglesButton = new ofxUIButton("clear", false, 20, 20);
+    ofxUIButton *invertTogglesButton = new ofxUIButton("invert", false, 20, 20);
+    
+    pinMatrixManipulator->addWidgetDown(heightSlider);
+    pinMatrixManipulator->addWidgetRight(relativeHeightSlider);
+    pinMatrixManipulator->addWidgetRight(undoButton);
+    pinMatrixManipulator->addWidgetRight(clearTogglesButton);
+    pinMatrixManipulator->addWidgetRight(invertTogglesButton);
+    
+    // flip some toggles on at initialization, just to offer a quick jumping off point
+    pinMatrix0->setAllToggles(false);
+    pinMatrix1->setAllToggles(true);
+    pinMatrix0->setAllToggles(false);
+    
+    ofAddListener(pinMatrixManipulator->newGUIEvent, this, &ReliefApplication::guiEvent);
+    pinMatrixManipulator->autoSizeToFitWidgets();
 }
 
 //--------------------------------------------------------------
@@ -551,6 +594,104 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
         }
     }
     
+    
+    // table matrix events
+    
+    else if(e.getName().size() >= 12 && e.getName().compare(0, 12, "table matrix") == 0)
+    {
+        updateActivePinMatrixManipulator(NULL);
+        
+        /*
+        // uncomment these lines to extract this event's pin location
+        stringstream ss(e.getName());
+        string eventHeader, _pinblock, _col, _row;
+        getline(ss, eventHeader, ':');
+        getline(ss, _pinblock, '(');
+        getline(ss, _col, ',');
+        getline(ss, _row, ')');
+        
+        int pinblock = atoi(_pinblock.c_str());
+        int col = atoi(_col.c_str());
+        int row = atoi(_row.c_str());
+        
+        if (pinblock == 0)
+            col += PINBLOCK_0_X_OFFSET;
+        else if (pinblock == 1)
+            col += PINBLOCK_1_X_OFFSET;
+        else if (pinblock == 2)
+            col += PINBLOCK_2_X_OFFSET;
+         */
+    }
+    
+    else if (e.getName() == "height")
+    {
+        // set a shared pin height for selected pins
+        ofxUIIntSlider *heightSlider = (ofxUIIntSlider *) e.widget;
+        updateActivePinMatrixManipulator(heightSlider);
+        mGUIShapeObject->setPins(pinMatrix0->getToggles(), pinMatrix1->getToggles(), pinMatrix2->getToggles(), heightSlider->getValue());
+    }
+    
+    else if (e.getName() == "relative height")
+    {
+        // increase/decrease pin height by a shared distance for selected pins
+        ofxUIIntSlider *relativeHeightSlider = (ofxUIIntSlider *) e.widget;
+        updateActivePinMatrixManipulator(relativeHeightSlider);
+        mGUIShapeObject->incrementPins(pinMatrix0->getToggles(), pinMatrix1->getToggles(), pinMatrix2->getToggles(), relativeHeightSlider->getValue());
+    }
+    
+    else if (e.getName() == "undo")
+    {
+        // only act once per button press
+        if (e.getButton()->getValue()) {
+            updateActivePinMatrixManipulator(NULL);
+            
+            // the current state and first backup are identical;
+            // throw out the first backup and restore its predecessor
+            mGUIShapeObject->popBackup();
+            mGUIShapeObject->restoreBackup();
+        }
+    }
+    
+    else if (e.getName() == "clear")
+    {
+        // only act once per button press
+        if (e.getButton()->getValue()) {
+            // clear the pin selection matrices
+            updateActivePinMatrixManipulator(NULL);
+            pinMatrix0->setAllToggles(false, false);
+            pinMatrix1->setAllToggles(false, false);
+            pinMatrix2->setAllToggles(false, false);
+        }
+    }
+    
+    else if (e.getName() == "invert")
+    {
+        // only act once per button press
+        if (e.getButton()->getValue()) {
+            // invert which pins are selected for manipulation
+            updateActivePinMatrixManipulator(NULL);
+            vector<ofxUIToggle *> toggles;
+            
+            // first block
+            toggles = pinMatrix0->getToggles();
+            for (vector<ofxUIToggle *>::iterator it = toggles.begin() ; it != toggles.end(); ++it)
+                (*it)->setValue(!(*it)->getValue());
+            
+            // second block
+            toggles = pinMatrix1->getToggles();
+            for (vector<ofxUIToggle *>::iterator it = toggles.begin() ; it != toggles.end(); ++it)
+                (*it)->setValue(!(*it)->getValue());
+            
+            // third block
+            toggles = pinMatrix2->getToggles();
+            for (vector<ofxUIToggle *>::iterator it = toggles.begin() ; it != toggles.end(); ++it)
+                (*it)->setValue(!(*it)->getValue());
+        }
+    }
+    
+    // end table matrix events
+    
+    
     else if(e.getName() == "Toggle Use Table")
     {
         ofxUIToggle *toggle = e.getToggle();
@@ -558,7 +699,7 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
 //        cout<< "TABLE------------- " << endl;
 //        cout<< toggle->getValue() << endl;
         
-        if(toggle->getValue()  == true)
+        if(toggle->getValue()  == true && false) // XXX
         {
             connectTable();
         }
@@ -595,6 +736,12 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
             mCurrentShapeObject = mImageShapeObject;
         }
         
+        else if(radio->getActiveName() == "gui")
+        {
+            cout << "gui" << endl;
+            mCurrentShapeObject = mGUIShapeObject;
+        }
+        
         else if(radio->getActiveName() == "TCP")
         {
             cout << "TCP" << endl;
@@ -621,6 +768,28 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
         }
     }
 };
+
+//------------------------------------------------------------
+//
+// Pin height manipulators may release many events during a single
+// manipulation (e.g. when sliding through many values). Therefore,
+// use the activePinMatrixManipulator tracker to determine when a
+// user has switched to a new manipulator, and interpret these
+// switches as the boundaries on discrete user actions. This
+// facilitates an undo stack and, with it, the option for pin
+// height manipulators like relativeHeightSlider to use the
+// previous pin matrix state in calculating the new state.
+//
+//------------------------------------------------------------
+
+void ReliefApplication::updateActivePinMatrixManipulator(ofxUIWidget *manipulator)
+{
+    if (activePinMatrixManipulator != manipulator) {
+        if (activePinMatrixManipulator)
+            mGUIShapeObject->pushBackup();
+        activePinMatrixManipulator = manipulator;
+    }
+}
 
 //------------------------------------------------------------
 //
