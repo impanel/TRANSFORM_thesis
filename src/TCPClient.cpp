@@ -23,6 +23,7 @@ void TCPClient::setup(){
     //fill the vector<>
 	for(int i = 0; i < size; i++)
 	{
+        pixels[i] = 0;
 		rects.push_back(ofRectangle());
 		rects.at(i).setHeight(1);
 		rects.at(i).setWidth(1);
@@ -31,6 +32,11 @@ void TCPClient::setup(){
     bStop = true;
     bPause = false;
     sequenceFPS = 30;
+    bErrorDetected = false;
+    bMentionError = false;
+    sequenceFPS = 30;
+    oldCheckSum = 999999;
+    frameIndex = 0;
     
     outImage.allocate(RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y, GL_RGB);
 }
@@ -54,11 +60,9 @@ void TCPClient::update(){
 		if(str.length() > 0)
         {
 			storeText.push_back(str);
-            unsigned char * receivedChars = new unsigned char[size];
             
             for(int i = 0; i < size; i++)
-                receivedChars[i] = 255  - str[i]; //invert values here because it doesn't work in maxscript
-            pixels = receivedChars;
+                pixels[i] = 255  - str[i]; //invert values here because it doesn't work in maxscript
 		}
 	}
     
@@ -176,6 +180,45 @@ void TCPClient::drawPins(unsigned char * _theColors)
 }
 //--------------------------------------------------------------
 
+bool TCPClient::checkForErrors() //method to check if any noise data was received (which unfortuntelly happens sometimes)
+{
+    //TODO
+    int currentCheckSum = 0;
+    
+    for(int i = 0; i < size; i++)
+    {
+        currentCheckSum += pixels[i]; //add all the 8-bit values
+    }
+    
+    //cout<<currentCheckSum<<endl;
+    
+    //if a sudden change happens we can assume it's an error
+    if (currentCheckSum > oldCheckSum + 50000)
+    {
+        bMentionError = true;
+        bErrorDetected = true;
+        cout<<"ERROR: received frame probably false"<<endl;
+        oldCheckSum = currentCheckSum;
+        //delete the false frame from collection
+        if(storeText.size() != 0)
+            storeText.erase(storeText.end());
+        return true;
+    }
+    else if(bErrorDetected && oldCheckSum == currentCheckSum) //for all following false frames do the same
+    {
+        if(storeText.size() != 0)
+            storeText.erase(storeText.end());
+        return true;
+    }
+    
+    //if no error detected
+    bErrorDetected = false;
+    oldCheckSum = currentCheckSum;
+    return false;
+}
+
+//--------------------------------------------------------------
+
 void TCPClient::togglePlay()
 {
     bStop = !bStop;
@@ -205,8 +248,16 @@ void TCPClient::clearFrames()
 void TCPClient::keyPressed(int key)
 {
     if (key == 'c')
+    {
+        bStop = true;
+        frameIndex = 0;
+        for(int i = 0; i < size; i++)
+            pixels[i] = 0;
         storeText.clear();
-    if (key == 'x') //toggle pause
+        bMentionError = false;
+    }
+    
+    if (key == ' ') //toggle pause
     {
         cout<<"pause"<<endl;
         bPause = !bPause;
@@ -216,12 +267,34 @@ void TCPClient::keyPressed(int key)
         else
             elapsedTime = ofGetElapsedTimef() - pauseTime;
     }
-    if (key == 'z') //toggle stop
+    
+    if (key == 's') //toggle stop
     {
         //stop
         bStop = !bStop;
         bPause = false;
         elapsedTime = ofGetElapsedTimef();
+    }
+    
+    //toggle stop
+    if(key == 'd')
+    {
+        //delete current frame from vector
+        storeText.erase(storeText.begin() + frameIndex);
+    }
+    
+    //advance single frame
+    if(key == OF_KEY_RIGHT)
+    {
+        if (frameIndex < storeText.size() - 1)
+            frameIndex++;
+    }
+    
+    //rewind single frame
+    if(key == OF_KEY_LEFT)
+    {
+        if (frameIndex != 0)
+            frameIndex--;
     }
 }
 
@@ -234,4 +307,12 @@ void TCPClient::setTableValuesForShape(ShapeIOManager *pIOManager)
     pIOManager->set_gain_i(0.045f);
     pIOManager->set_max_i(25);
     pIOManager->set_deadzone(2);
+}
+
+//--------------------------------------------------------------
+
+void TCPClient::exit()
+{
+    TCP.disconnectClient(0);
+    TCP.close();
 }
