@@ -19,7 +19,6 @@
 #include "FadeLoopShapeObject.h"
 #include "ImageShapeObject.h"
 #include "GUIShapeObject.h"
-#include "HandShapeObject.h"
 #include "ofxUI.h"
 #include "TCPClient.h"
 
@@ -74,7 +73,6 @@ public:
     CalmShapeObject             * mCalmShapeObject; // calm shape object, does nothing but used to reset
     ImageShapeObject            * mImageShapeObject;;
     GUIShapeObject              * mGUIShapeObject;;
-    HandShapeObject             * mHandShapeObject;
     TCPClient                   * mTCPShapeObject;
     
     ofxCvColorImage             cvColorImage;

@@ -104,16 +104,11 @@ void ReliefApplication::initalizeShapeObjects() {
     mTCPShapeObject = new TCPClient();
     mTCPShapeObject->setup();
     
-    mHandShapeObject = new HandShapeObject();
-    mHandShapeObject->setImageWarper(mImageWarper);
-    mHandShapeObject->setKinectTracker(&mKinectTracker);
-    
     // push all shape objects to a buffer
     allShapeObjects.push_back(mMachineAnimationShapeObject);
     allShapeObjects.push_back(mKinectShapeObject);
     allShapeObjects.push_back(mCalmShapeObject);
     allShapeObjects.push_back(mImageShapeObject);
-    allShapeObjects.push_back(mHandShapeObject);
     allShapeObjects.push_back(mTCPShapeObject);
 }
 
