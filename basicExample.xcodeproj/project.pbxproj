@@ -11,8 +11,6 @@
 		1d5f3298c2fa073628012944 /* ofxCvContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = c76de5c29bdbd2caa1dd0021 /* ofxCvContourFinder.cpp */; };
 		250a95ba26587be85db0a353 /* ofxCvColorImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ce9c7160245b19131dae6128 /* ofxCvColorImage.cpp */; };
 		255a7b680dc81e543c875794 /* usb_libusb10.c in Sources */ = {isa = PBXBuildFile; fileRef = 28f9707464ba3ff98e05096c /* usb_libusb10.c */; };
-		4407796A18F05F150029882C /* EscherShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4407796818F05F150029882C /* EscherShapeObject.cpp */; };
-		44A9690C196D9A8300109D7E /* HandShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44A9690A196D9A8300109D7E /* HandShapeObject.cpp */; };
 		44B4ABDC18ECAD0C00D97631 /* ImageShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44B4ABDA18ECAD0C00D97631 /* ImageShapeObject.cpp */; };
 		49beeb2dfa5319d55aa6899f /* tilt.c in Sources */ = {isa = PBXBuildFile; fileRef = bf2f2aa872288d30f53983ef /* tilt.c */; };
 		63020f16c7e8ded980111241 /* ofxCvImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = c6151136d101f857dae12722 /* ofxCvImage.cpp */; };
@@ -67,6 +65,7 @@
 		8A40C5D518B0716700911A7A /* ShapeIOManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A40C5D018B0716700911A7A /* ShapeIOManager.cpp */; };
 		8A40C5D618B0716700911A7A /* ShapeSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A40C5D218B0716700911A7A /* ShapeSerial.cpp */; };
 		8A40C5DB18B190BD00911A7A /* KinectTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A40C5D918B190BD00911A7A /* KinectTracker.cpp */; };
+		8A6073FD1A963FE900E43F10 /* GUIShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A6073FB1A963FE900E43F10 /* GUIShapeObject.cpp */; };
 		8ABAA61618EFF18000009A66 /* ofxUI2DGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ABAA58618EFF18000009A66 /* ofxUI2DGraph.cpp */; };
 		8ABAA61718EFF18000009A66 /* ofxUI2DPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ABAA58818EFF18000009A66 /* ofxUI2DPad.cpp */; };
 		8ABAA61818EFF18000009A66 /* ofxUIBaseDraws.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ABAA58A18EFF18000009A66 /* ofxUIBaseDraws.cpp */; };
@@ -124,9 +123,6 @@
 		A087E56D18D7B2D4009FAE6B /* ofxMovieExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A087E55D18D7B2D4009FAE6B /* ofxMovieExporter.cpp */; };
 		A0AFE03A18DBD9F400C0D6C9 /* FadeLoopShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AFE03818DBD9F400C0D6C9 /* FadeLoopShapeObject.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
-		D902971818DD1C7F00BEDF11 /* WavyShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D902971718DD1C7F00BEDF11 /* WavyShapeObject.cpp */; };
-		D902972118DD2B4E00BEDF11 /* Boid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D902971D18DD2B4E00BEDF11 /* Boid.cpp */; };
-		D902972218DD2B4E00BEDF11 /* FlockShapeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D902971F18DD2B4E00BEDF11 /* FlockShapeObject.cpp */; };
 		D902972918DD465300BEDF11 /* ReliefApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D902972718DD465300BEDF11 /* ReliefApplication.cpp */; };
 		D912F41418C1591C00F2CDD7 /* videoRecorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D912F41318C1591C00F2CDD7 /* videoRecorder.cpp */; };
 		D9F0A1C018DCE608007E7E35 /* ofxMSATimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D9F0A15918DCE607007E7E35 /* ofxMSATimer.cpp */; };
@@ -226,10 +222,6 @@
 		3c232045833313b99efe0b14 /* ofxCvMain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxCvMain.h; path = ../../../addons/ofxOpenCv/src/ofxCvMain.h; sourceTree = SOURCE_ROOT; };
 		3cabca8ea52d11c95f7a1309 /* registration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = registration.h; path = ../../../addons/ofxKinect/libs/libfreenect/src/registration.h; sourceTree = SOURCE_ROOT; };
 		3dbd37876a11e46e4d7069b3 /* cameras.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 30; name = cameras.c; path = ../../../addons/ofxKinect/libs/libfreenect/src/cameras.c; sourceTree = SOURCE_ROOT; };
-		4407796818F05F150029882C /* EscherShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EscherShapeObject.cpp; sourceTree = "<group>"; };
-		4407796918F05F150029882C /* EscherShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EscherShapeObject.h; sourceTree = "<group>"; };
-		44A9690A196D9A8300109D7E /* HandShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandShapeObject.cpp; sourceTree = "<group>"; };
-		44A9690B196D9A8300109D7E /* HandShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandShapeObject.h; sourceTree = "<group>"; };
 		44B4ABDA18ECAD0C00D97631 /* ImageShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageShapeObject.cpp; sourceTree = "<group>"; };
 		44B4ABDB18ECAD0C00D97631 /* ImageShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageShapeObject.h; sourceTree = "<group>"; };
 		44ef97bdd915e758777a9a8c /* ofxKinect.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxKinect.h; path = ../../../addons/ofxKinect/src/ofxKinect.h; sourceTree = SOURCE_ROOT; };
@@ -379,6 +371,8 @@
 		8A40C5DA18B190BD00911A7A /* KinectTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KinectTracker.h; path = ../KinectTracker.h; sourceTree = "<group>"; };
 		8A40C5DE18B1914900911A7A /* heightMapShader.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = heightMapShader.frag; sourceTree = "<group>"; };
 		8A40C5DF18B1914900911A7A /* heightMapShader.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = heightMapShader.vert; sourceTree = "<group>"; };
+		8A6073FB1A963FE900E43F10 /* GUIShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIShapeObject.cpp; sourceTree = "<group>"; };
+		8A6073FC1A963FE900E43F10 /* GUIShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIShapeObject.h; sourceTree = "<group>"; };
 		8ABAA3C118EFF17D00009A66 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		8ABAA58218EFF18000009A66 /* ofxaddons_thumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ofxaddons_thumbnail.png; sourceTree = "<group>"; };
 		8ABAA58318EFF18000009A66 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
@@ -570,12 +564,6 @@
 		A0AFE03818DBD9F400C0D6C9 /* FadeLoopShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FadeLoopShapeObject.cpp; sourceTree = "<group>"; };
 		A0AFE03918DBD9F400C0D6C9 /* FadeLoopShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FadeLoopShapeObject.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
-		D902971618DD1C7F00BEDF11 /* WavyShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WavyShapeObject.h; sourceTree = "<group>"; };
-		D902971718DD1C7F00BEDF11 /* WavyShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WavyShapeObject.cpp; sourceTree = "<group>"; };
-		D902971D18DD2B4E00BEDF11 /* Boid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Boid.cpp; sourceTree = "<group>"; };
-		D902971E18DD2B4E00BEDF11 /* Boid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Boid.h; sourceTree = "<group>"; };
-		D902971F18DD2B4E00BEDF11 /* FlockShapeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlockShapeObject.cpp; sourceTree = "<group>"; };
-		D902972018DD2B4E00BEDF11 /* FlockShapeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlockShapeObject.h; sourceTree = "<group>"; };
 		D902972718DD465300BEDF11 /* ReliefApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReliefApplication.cpp; sourceTree = "<group>"; };
 		D902972818DD465300BEDF11 /* ReliefApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReliefApplication.h; sourceTree = "<group>"; };
 		D912F41218C158EC00F2CDD7 /* videoRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = videoRecorder.h; sourceTree = "<group>"; };
@@ -882,24 +870,6 @@
 				67af0e794fa186dd25454cc9 /* calib3d.hpp */,
 			);
 			name = calib3d;
-			sourceTree = "<group>";
-		};
-		4407796718F05F050029882C /* escher */ = {
-			isa = PBXGroup;
-			children = (
-				4407796818F05F150029882C /* EscherShapeObject.cpp */,
-				4407796918F05F150029882C /* EscherShapeObject.h */,
-			);
-			name = escher;
-			sourceTree = "<group>";
-		};
-		44A96909196D9A6B00109D7E /* hand */ = {
-			isa = PBXGroup;
-			children = (
-				44A9690A196D9A8300109D7E /* HandShapeObject.cpp */,
-				44A9690B196D9A8300109D7E /* HandShapeObject.h */,
-			);
-			name = hand;
 			sourceTree = "<group>";
 		};
 		44B4ABD918ECACF700D97631 /* image */ = {
@@ -1278,6 +1248,15 @@
 			path = bin/data/shaders;
 			sourceTree = SOURCE_ROOT;
 		};
+		8A6073FA1A963FC900E43F10 /* gui */ = {
+			isa = PBXGroup;
+			children = (
+				8A6073FB1A963FE900E43F10 /* GUIShapeObject.cpp */,
+				8A6073FC1A963FE900E43F10 /* GUIShapeObject.h */,
+			);
+			name = gui;
+			sourceTree = "<group>";
+		};
 		8ABAA3C018EFF17D00009A66 /* ofxUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1402,17 +1381,6 @@
 			name = videoPlayers;
 			sourceTree = "<group>";
 		};
-		8ADF8B4418DE01C50011F7C4 /* flock */ = {
-			isa = PBXGroup;
-			children = (
-				D902971D18DD2B4E00BEDF11 /* Boid.cpp */,
-				D902971E18DD2B4E00BEDF11 /* Boid.h */,
-				D902971F18DD2B4E00BEDF11 /* FlockShapeObject.cpp */,
-				D902972018DD2B4E00BEDF11 /* FlockShapeObject.h */,
-			);
-			name = flock;
-			sourceTree = "<group>";
-		};
 		8ADF8B4518DE01D50011F7C4 /* fade */ = {
 			isa = PBXGroup;
 			children = (
@@ -1438,15 +1406,6 @@
 				8A193EED18DBEC7100516528 /* MachineAnimationShapeObject.h */,
 			);
 			name = machineAnimations;
-			sourceTree = "<group>";
-		};
-		8ADF8B4818DE01F10011F7C4 /* wavy */ = {
-			isa = PBXGroup;
-			children = (
-				D902971618DD1C7F00BEDF11 /* WavyShapeObject.h */,
-				D902971718DD1C7F00BEDF11 /* WavyShapeObject.cpp */,
-			);
-			name = wavy;
 			sourceTree = "<group>";
 		};
 		8ADF8B4918DE01F90011F7C4 /* calm */ = {
@@ -1757,15 +1716,12 @@
 		D902971A18DD256400BEDF11 /* ShapeObjects */ = {
 			isa = PBXGroup;
 			children = (
-				44A96909196D9A6B00109D7E /* hand */,
-				4407796718F05F050029882C /* escher */,
+				8A6073FA1A963FC900E43F10 /* gui */,
 				44B4ABD918ECACF700D97631 /* image */,
 				8A193ED018DBCE8F00516528 /* ShapeObject.h */,
-				8ADF8B4418DE01C50011F7C4 /* flock */,
 				8ADF8B4518DE01D50011F7C4 /* fade */,
 				8ADF8B4618DE01E10011F7C4 /* kinect */,
 				8ADF8B4718DE01E70011F7C4 /* machineAnimations */,
-				8ADF8B4818DE01F10011F7C4 /* wavy */,
 				8ADF8B4918DE01F90011F7C4 /* calm */,
 				8ADF8B4A18DE02010011F7C4 /* tcp */,
 			);
@@ -2228,8 +2184,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D902971818DD1C7F00BEDF11 /* WavyShapeObject.cpp in Sources */,
-				44A9690C196D9A8300109D7E /* HandShapeObject.cpp in Sources */,
 				8A193ED518DBCE8F00516528 /* TableSimulator.cpp in Sources */,
 				8A193ED418DBCE8F00516528 /* KinectShapeObject.cpp in Sources */,
 				D9F0A1D518DCE608007E7E35 /* ofxEasingSine.cpp in Sources */,
@@ -2240,6 +2194,7 @@
 				8A1940E318DD336E00516528 /* ofxTLTrackHeader.cpp in Sources */,
 				8ABAA63518EFF18000009A66 /* ofxUISortableList.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				8A6073FD1A963FE900E43F10 /* GUIShapeObject.cpp in Sources */,
 				8ABAA62318EFF18000009A66 /* ofxUIImageButton.cpp in Sources */,
 				686b0df6249b52e1a85b39ec /* ofxKinect.cpp in Sources */,
 				8A1940BE18DD336D00516528 /* kiss_fft.c in Sources */,
@@ -2284,7 +2239,6 @@
 				49beeb2dfa5319d55aa6899f /* tilt.c in Sources */,
 				8A193EEE18DBEC7100516528 /* CalmShapeObject.cpp in Sources */,
 				D9F0A1CC18DCE608007E7E35 /* ofxEasingBounce.cpp in Sources */,
-				D902972118DD2B4E00BEDF11 /* Boid.cpp in Sources */,
 				8ABAA63618EFF18000009A66 /* ofxUISpacer.cpp in Sources */,
 				D9F0A1D218DCE608007E7E35 /* ofxEasingQuad.cpp in Sources */,
 				D9F0A1D118DCE608007E7E35 /* ofxEasingLinear.cpp in Sources */,
@@ -2353,9 +2307,7 @@
 				8ABAA63018EFF18000009A66 /* ofxUIRangeSlider.cpp in Sources */,
 				8A1940DF18DD336E00516528 /* ofxTLPageTabs.cpp in Sources */,
 				8ABAA62218EFF18000009A66 /* ofxUIImage.cpp in Sources */,
-				D902972218DD2B4E00BEDF11 /* FlockShapeObject.cpp in Sources */,
 				1d5f3298c2fa073628012944 /* ofxCvContourFinder.cpp in Sources */,
-				4407796A18F05F150029882C /* EscherShapeObject.cpp in Sources */,
 				e212c821d1064b92dd953a42 /* ofxCvHaarFinder.cpp in Sources */,
 				8A1940CA18DD336E00516528 /* ofxHotKeys_impl_linux.cpp in Sources */,
 				8A1940E618DD336E00516528 /* ofxTLZoomer.cpp in Sources */,

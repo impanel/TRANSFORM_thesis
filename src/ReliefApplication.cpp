@@ -694,7 +694,7 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
 //        cout<< "TABLE------------- " << endl;
 //        cout<< toggle->getValue() << endl;
         
-        if(toggle->getValue()  == true && false) // XXX
+        if(toggle->getValue()  == true) // XXX
         {
             connectTable();
         }

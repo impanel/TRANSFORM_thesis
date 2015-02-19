@@ -1,7 +1,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>Toggle Use Table</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -26,12 +26,12 @@
 <Widget>
     <Kind>2</Kind>
     <Name>gui</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>TCP</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
