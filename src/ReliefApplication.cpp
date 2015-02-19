@@ -457,26 +457,11 @@ void ReliefApplication::keyPressed(int key){
         case '=':
             incrementAndSetCurrentScreen();
             break;
-        case 's':
-        case 'S':
-            mMachineAnimationShapeObject->stopNowPlaying(); // drops the video
-            break;
-        case 'c':
-        case 'C':
-            mTCPShapeObject->clearFrames();
-            break;
-        case 'x':
-        case 'X':
-            mTCPShapeObject->togglePlay();
-            break;
-        case 'z':
-        case 'Z':
-            mTCPShapeObject->togglePause();
-            break;
-        case 'l':
-            
-            break;
     }
+    
+    //send key commands to tcp
+    if(mCurrentShapeObject->get_shape_name() == "tcp")
+        mTCPShapeObject->keyPressed(key);
     
     //recorder.keyPressed(key);
 }
@@ -685,7 +670,6 @@ void ReliefApplication::guiEvent(ofxUIEventArgs &e)
     }
     
     // end table matrix events
-    
     
     else if(e.getName() == "Toggle Use Table")
     {
