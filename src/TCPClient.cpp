@@ -17,7 +17,7 @@ void TCPClient::setup(){
     pixels = new unsigned char[size];
 	
     //setup the server to listen on 11999
-	TCP.setup(11996);
+	TCP.setup(11995);
 	TCP.setMessageDelimiter("\n");
     
     //fill the vector<>
@@ -82,7 +82,13 @@ void TCPClient::update(){
         
         //draw the info text and the received text bellow it
         ofDrawBitmapString(info, xPos, yPos);
-        ofDrawBitmapString(storeInfo, xPos + 500, yPos);
+        ofDrawBitmapString(storeInfo, xPos, yPos + 35);
+        
+        if(bPause)
+            ofDrawBitmapString("PLAYBACK PAUSED", xPos, yPos + 70);
+        
+        if(bMentionError)
+            ofDrawBitmapString("ERROR in received data: please clear array [c]", xPos, yPos + 105);
     }
     
     if (bStop)
@@ -147,29 +153,39 @@ void TCPClient::drawPins(unsigned char * _theColors)
     ofSetColor(0);
     ofRect(0, 0, RELIEF_PHYSICAL_SIZE_X, RELIEF_PHYSICAL_SIZE_Y);
     
-    //sort incoming data
-    for(int k = 0; k < islands; k++) // islands
-	{
-        for(int i = 0; i < columns; i++) // columns
+    checkForErrors();
+    cout << bErrorDetected << endl;
+    if(!bErrorDetected)
+    {
+        //sort incoming data
+        for(int k = 0; k < islands; k++) // islands
         {
-            for(int j = 0; j < rows; j++) // rows
+            for(int i = 0; i < columns; i++) // columns
             {
-                //sort linear array to the 3 islands
-                int idx = (j * columns) + (k * islandSize) + i;
+                for(int j = 0; j < rows; j++) // rows
+                {
+                    //sort linear array to the 3 islands
+                    int idx = (j * columns) + (k * islandSize) + i;
                
-                int sortIdx = (k + i) * (rows) + j;
+                    int sortIdx = (k + i) * (rows) + j;
                 
-                rects.at(idx).setWidth(1);
-                rects.at(idx).setHeight(1);
+                    rects.at(idx).setWidth(1);
+                    rects.at(idx).setHeight(1);
                 
-                rects.at(idx).x = ( xOffset + (i + k * islandSpacer));
-				rects.at(idx).y = (j);
+                    rects.at(idx).x = ( xOffset + (i + k * islandSpacer));
+                    rects.at(idx).y = (j);
                 
-                ofSetColor(_theColors[idx]);
-                //draw values in sorted order
-                ofRect(rects.at(idx));
+                    ofSetColor(_theColors[idx]);
+                    //draw values in sorted order
+                    ofRect(rects.at(idx));
+                }
             }
         }
+    }
+    else
+    {
+        ofSetColor(0, 0, 0);
+        ofRect(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
     }
     
     outImage.end();
@@ -193,7 +209,8 @@ bool TCPClient::checkForErrors() //method to check if any noise data was receive
     //cout<<currentCheckSum<<endl;
     
     //if a sudden change happens we can assume it's an error
-    if (currentCheckSum > oldCheckSum + 50000)
+    if (currentCheckSum > oldCheckSum + 90000  || (bErrorDetected && oldCheckSum == currentCheckSum)
+        || (bErrorDetected && currentCheckSum != 0))
     {
         bMentionError = true;
         bErrorDetected = true;
@@ -204,12 +221,12 @@ bool TCPClient::checkForErrors() //method to check if any noise data was receive
             storeText.erase(storeText.end());
         return true;
     }
-    else if(bErrorDetected && oldCheckSum == currentCheckSum) //for all following false frames do the same
-    {
-        if(storeText.size() != 0)
-            storeText.erase(storeText.end());
-        return true;
-    }
+//    else if(bErrorDetected && oldCheckSum == currentCheckSum) //for all following false frames do the same
+//    {
+//        if(storeText.size() != 0)
+//            storeText.erase(storeText.end());
+//        return true;
+//    }
     
     //if no error detected
     bErrorDetected = false;
