@@ -11,8 +11,6 @@
 
 #include <iostream>
 
-// @todo: not a shape object right now
-
 //#include "ofMain.h"
 #include "ofxNetwork.h"
 #include <iostream>

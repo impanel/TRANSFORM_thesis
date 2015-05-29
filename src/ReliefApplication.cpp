@@ -399,6 +399,17 @@ void ReliefApplication::draw(){
     {
         mTCPShapeObject->update();
         mCurrentShapeObject->renderShape();
+        
+        ofPushStyle();
+        ofSetColor(255);
+        string msg = "[c] clear all frames and reset the frame buffer array";
+        msg += "\n[s] start/stop animation playback (stop will reset animation playback to the beginning)";
+        msg += "\n[d] delete current frame from frame buffer array";
+        msg += "\n[space] pause/resume animation";
+        msg += "\n[left] jump to previous frame";
+        msg += "\n[right] jump to next frame";
+        ofDrawBitmapStringHighlight(msg, 10, ofGetWindowHeight() - 200);
+        ofPopStyle();
     }
     
     // draw simulation in all views if we want
