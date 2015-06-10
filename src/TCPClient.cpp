@@ -17,7 +17,7 @@ void TCPClient::setup(){
     pixels = new unsigned char[size];
 	
     //setup the server to listen on 11999
-	TCP.setup(11995);
+	TCP.setup(11996);
 	TCP.setMessageDelimiter("\n");
     
     //fill the vector<>
