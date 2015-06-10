@@ -16,7 +16,7 @@ void TCPClient::setup(){
 	size = RELIEF_SIZE_X * RELIEF_SIZE_Y;
     pixels = new unsigned char[size];
 	
-    //setup the server to listen on 11999
+    //setup the server to listen on specified port
 	TCP.setup(11996);
 	TCP.setMessageDelimiter("\n");
     

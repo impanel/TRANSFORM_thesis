@@ -58,6 +58,7 @@ public:
     
     ImageWarper                 * mImageWarper; // warps images from one coordinate system to another
     ShapeObject                 * mCurrentShapeObject;
+    
     //vector                      <ShapeObject*> mCurrentShapeObjects;
     vector                      <ShapeObject*> allShapeObjects;
     vector                      <string> allsShapeObjectsNames;
